@@ -90,8 +90,6 @@ The initial repository structure should support future runners without changing 
 
 Create the initial language-agnostic repository structure and scaffold the Elixir runner project.
 
-Status: [x] Completed
-
 Deliverables:
 
 - [x] `runners/elixir/` as a Mix project
@@ -109,8 +107,6 @@ Review focus:
 
 Document the language-agnostic contract for spec parsing, test discovery, matching, and reporting.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Is the workflow precise enough for both humans and LLMs?
@@ -119,8 +115,6 @@ Review focus:
 ### Task 3: Write `SKILL.md`
 
 Document how agents should write specs, write tests, and install or copy runners into user projects.
-
-Status: [ ] Pending
 
 Review focus:
 
@@ -131,8 +125,6 @@ Review focus:
 
 Create Markdown specs that describe how the parser should interpret valid and invalid spec files.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Are scenario and assertion rules unambiguous?
@@ -141,8 +133,6 @@ Review focus:
 ### Task 5: Write Matching Specs
 
 Create Markdown specs for file pairing, scenario matching, assertion matching, and orphan detection.
-
-Status: [ ] Pending
 
 Review focus:
 
@@ -153,8 +143,6 @@ Review focus:
 
 Create Markdown specs for CLI output structure and summary behavior.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Is the report readable by humans and AI tools?
@@ -163,8 +151,6 @@ Review focus:
 ### Task 7: Implement The Elixir Spec Parser
 
 Parse Markdown files into an internal representation of file title, scenarios, and assertions.
-
-Status: [ ] Pending
 
 Review focus:
 
@@ -175,8 +161,6 @@ Review focus:
 
 Parse ExUnit files and extract grouped blocks and test names for matching.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Is discovery robust without executing tests?
@@ -185,8 +169,6 @@ Review focus:
 ### Task 9: Implement The Matcher
 
 Join spec data and discovered test data to compute pass, fail, pending, and orphan states.
-
-Status: [ ] Pending
 
 Review focus:
 
@@ -197,8 +179,6 @@ Review focus:
 
 Render a CLI report from the computed status model.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Is the output concise and easy to scan?
@@ -207,8 +187,6 @@ Review focus:
 ### Task 11: Implement `mix spec`
 
 Create the integration entrypoint that loads specs, discovers tests, runs matching, and prints the report.
-
-Status: [ ] Pending
 
 Review focus:
 
@@ -219,8 +197,6 @@ Review focus:
 
 Run the Elixir runner against this repository's own specs and tests, then fix gaps.
 
-Status: [ ] Pending
-
 Review focus:
 
 - Does the methodology hold up in practice?
@@ -229,8 +205,6 @@ Review focus:
 ### Task 13: Add Examples
 
 Add a minimal sample spec and mapped test to make onboarding concrete.
-
-Status: [ ] Pending
 
 Review focus:
 
