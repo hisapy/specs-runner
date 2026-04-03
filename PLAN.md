@@ -7,7 +7,7 @@ Build a language-agnostic workflow for writing specifications in Markdown and ma
 The repository will contain:
 
 - a language-agnostic blueprint for the workflow
-- AI-facing instructions for authoring specs and wiring tests
+- AI-facing skills for authoring specs and wiring tests
 - runner implementations per ecosystem
 - dogfooding specs used to validate the approach itself
 
@@ -62,8 +62,8 @@ The initial repository structure should support future runners without changing 
 ### Phase 1: Foundation
 
 - [x] Initialize the repository structure
-- [ ] Write the language-agnostic blueprint
-- [ ] Write the AI-facing `SKILL.md`
+- [x] Write the language-agnostic blueprint
+- [x] Write the AI-facing skills
 
 ### Phase 2: Dogfooding Specifications
 
@@ -112,7 +112,7 @@ Review focus:
 - Is the workflow precise enough for both humans and LLMs?
 - Does it avoid introducing DSL complexity?
 
-### Task 3: Write `SKILL.md`
+### Task 3: Write AI-Facing Skills
 
 Document how agents should write specs, write tests, and install or copy runners into user projects.
 
