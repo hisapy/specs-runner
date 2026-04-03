@@ -236,6 +236,23 @@ Examples:
 
 Each job should execute only the native commands for that runner and should not require unrelated toolchains.
 
+## Base Implementation Acceptance Criteria
+
+- [ ] Parse Markdown spec files using the agreed contract
+- [ ] Discover native test structure for one ecosystem
+- [ ] Match spec files, scenarios, and assertions to tests deterministically
+- [ ] Report pass, fail, pending, and orphan states
+- [ ] Leave native test execution unchanged
+
+## Extension Points
+
+- [ ] Configurable spec and test directories
+- [ ] Optional machine-readable output such as JSON
+- [ ] Explicit escape hatches for non-mirrored file mapping
+- [ ] Richer orphan reporting
+- [ ] Optional extraction of documentation-only sections into reports
+- [ ] Adapters for more ecosystems
+
 ## Success Criteria For Task 1
 
 Task 1 is complete when:
