@@ -1,43 +1,47 @@
 ---
 name: spec-authoring
-description: Write Markdown specifications that can translate to testable assertions
+description: The canonical guide for writing Markdown specifications that can be tested deterministically with an spec runner.
 ---
 
 # Spec Authoring
 
-This skill is based on the contract in `blueprint.md`.
+This skill is the authoritative source of truth for writing testable system requirements, features, behaviors or any kind of software specifications in Markdown, following a format that can be parsed and verified deterministically by an spec runner tailored to this format.
 
-When writing specifications in Markdown, follow the format specified in the [blueprint](../../blueprint.md) and the guidelines in this skill.
+The strategy is:
+
+- write specifications in plain Markdown
+- keep the format small and deterministic
+- describe behavior, not test implementation
+- let the runner parse specs deterministically
+- let later workflow steps generate and implement tests
+
+We are not trying to recreate executable step systems such as Gherkin, Cucumber, or Gauge.
 
 ## Purpose
 
 Use this skill when the user wants to:
 
-- write product or behavior specifications in Markdown
+- write a new specification in Markdown
+- refine an existing Markdown specification
 - improve scenario and assertion wording
-- review Markdown spec quality and structure
+- review whether a spec follows the format specified in this document
 
-## Use This Skill When
+This skill defines how Markdown specifications should be written before any runner-specific parsing or test scaffolding happens.
 
-Use this skill when:
+## Scope
 
-- specifications live in Markdown
-- the runner will parse specs deterministically
-- test scaffolding may be generated separately from the spec authoring step
+This skill covers only Markdown specification writing.
 
-Do not use this skill for teams that explicitly want executable Given/When/Then steps or data-driven step bindings.
+This skill does not cover:
 
-## First Principles
+- runner installation
+- scaffold generation
+- test implementation
+- native test framework usage
 
-- Do not invent a new DSL
-- Do not reimplement Gherkin, Cucumber, Gauge, or similar step-based systems
-- Do not pass data tables or strings from specs into test functions
-- Keep the spec readable and deterministic to parse
-- Do not make this skill responsible for generating or filling test files
+## Default Location
 
-## Expected Project Shape
-
-By default, assume specifications live under:
+By default, specifications live under:
 
 ```text
 specs/
@@ -49,62 +53,125 @@ Example:
 specs/auth/login.md
 ```
 
-The runner may later use mirrored paths to generate or discover test files, but this skill focuses only on authoring the Markdown spec.
+## Format specification
 
-## What This Skill Produces
+Each specification file must follow these rules:
 
-This skill should produce:
+- exactly one H1 heading for the file title
+- zero or more H2 headings using the exact prefix `Scenario:`
+- zero or more paragraphs of prose anywhere they help explain intent
+- an `Assertions:` section under each scenario when explicit testable behaviors are listed
+- bullet items directly under `Assertions:` for each testable behavior
 
-- valid Markdown spec files
-- clear scenario names
-- concrete assertion bullets
-- helpful prose that remains non-executable
+## Canonical Shape
 
-This skill should not produce:
+```md
+# Feature or Capability Title
 
-- test scaffolding
-- test implementation
-- runner installation changes
-- stack-specific test code
+Optional introductory prose.
 
-## Required Spec Rules
+## Scenario: Scenario name
 
-- one H1 title per file
-- scenarios must be H2 headings with the exact prefix `Scenario:`
-- each scenario may include free-form prose
-- assertions must appear under `Assertions:`
-- assertion bullets must be concrete, testable behaviors
-- scenario names must be unique within the file
-- assertion text must be unique within the scenario
+Optional prose describing context, constraints, or examples.
 
-## Recommended Writing Style
+Assertions:
 
-- keep scenario names short and stable
-- make assertions observable and outcome-focused
-- avoid implementation details in spec text
-- avoid overly broad assertions that bundle many outcomes together
-- avoid splitting one tiny behavior into many trivial assertions
-- prefer one behavior per assertion bullet
-- prefer one feature or cohesive capability per spec file
-- keep prose helpful but non-essential to matching
+- First testable behavior
+- Second testable behavior
+```
 
-## Writing Heuristics
+## Semantics
+
+### H1 Title
+
+The H1 heading names the overall feature, capability, or concern described by the file.
+
+Use a concise, human-readable title.
+
+### Scenario Headings
+
+Each scenario heading must be an H2 heading with the exact `Scenario:` prefix.
+
+Good examples:
+
+- `## Scenario: Successful login`
+- `## Scenario: Failed login with wrong password`
+
+Bad examples:
+
+- `## Successful login`
+- `## Scenarios`
+- `### Scenario: Successful login`
+
+### Assertions Section
+
+`Assertions:` introduces the list of expected testable behaviors for the scenario.
+
+Each bullet under `Assertions:` should represent one concrete behavior that can later map to one generated test case.
+
+## Writing Rules
+
+### Scenario Naming
+
+Scenario names should:
+
+- describe one coherent situation
+- be short enough to reuse later in generated test structure
+- stay stable over time when possible
+- be unique within the file
+
+### Assertion Writing
+
+Assertion bullets should:
+
+- describe observable outcomes
+- be concrete and specific
+- avoid implementation details when possible
+- be unique within the scenario
+- represent one independently testable behavior
+
+### Prose Usage
+
+Normal prose is allowed and encouraged when it improves understanding.
+
+Good uses of prose:
+
+- describe context
+- explain constraints
+- clarify intent
+- note examples or domain expectations
+
+Prose remains documentation.
+It is not executable and should not be written as if it were code.
+
+## Good And Bad Assertions
 
 Good assertion examples:
 
 - `Creates a session with valid credentials`
 - `Rejects invalid password`
 - `Returns a validation error for an empty email`
+- `Does not create a second subscription for the same user`
 
 Weak assertion examples:
 
 - `Works correctly`
 - `Handles edge cases`
+- `Does the right thing`
 - `Logs in the user and updates analytics and sends email`
 
-If an assertion combines multiple independently testable outcomes, split it.
+If an assertion combines multiple outcomes that should be validated independently, split it.
 
-## Spec Example
+## Recommended Writing Style
+
+- prefer one feature or cohesive capability per file
+- prefer one scenario per distinct situation
+- prefer one behavior per assertion bullet
+- keep wording outcome-focused
+- keep titles and assertions easy to reuse verbatim later
+- avoid unnecessary jargon when simple wording is enough
+
+## Example Spec
 
 ```md
 # User Login
@@ -130,33 +197,25 @@ Assertions:
 - Increments failed attempt counter
 ```
 
-## Context And Prose
-
-Use normal prose to capture context, constraints, and examples.
-
-- prose above `Assertions:` is allowed
-- prose should help humans and future agents understand intent
-- prose is documentation only unless the runner explicitly chooses to display it
-
-Do not turn prose into executable sections.
-
 ## Review Checklist
+
+Use this checklist when reviewing a spec:
 
 - the file has exactly one H1 heading
 - every scenario heading uses the exact `Scenario:` prefix
+- scenario headings are H2 headings
 - every assertion bullet is specific and testable
 - scenario names are unique within the file
 - assertion text is unique within each scenario
-- the wording avoids implementation details when possible
+- prose improves clarity without becoming executable syntax
+- wording avoids implementation details unless they are essential to the behavior
 
 ## What To Avoid
 
 - adding `Given`, `When`, `Then` semantics or equivalent executable sections
+- writing specs as if they were step definitions
+- embedding tables or parameter syntax intended for runtime execution
 - using broad scenario titles with vague assertions
-- putting implementation details into assertion names
+- putting implementation details into every assertion
 - adding setup or action sections that the runner must execute
-
-## Related Skills
-
-- Use `runner-setup` to install or extend the runner
-- Use `test-scaffold-implementation` to fill generated test scaffolding
+- inventing alternative section names for the canonical structure when avoidable
