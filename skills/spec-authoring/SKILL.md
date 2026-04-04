@@ -1,29 +1,29 @@
 ---
 name: spec-authoring
-description: Write Markdown specifications and matching native tests that follow the specs-runner contract.
+description: Write Markdown specifications that can translate to testable assertions
 ---
 
 # Spec Authoring
+
+This skill is based on the contract in `blueprint.md`.
+
+When writing specifications in Markdown, follow the format specified in the [blueprint](../../blueprint.md) and the guidelines in this skill.
 
 ## Purpose
 
 Use this skill when the user wants to:
 
 - write product or behavior specifications in Markdown
-- map those specifications to native tests
-- review or refine spec and test alignment
 - improve scenario and assertion wording
-
-This skill is based on the contract in `blueprint.md`.
+- review Markdown spec quality and structure
 
 ## Use This Skill When
 
-Use this skill when the user wants a workflow where:
+Use this skill when:
 
 - specifications live in Markdown
-- tests stay native to the project stack
-- coverage is tracked by deterministic name and path matching
-- missing implementation and orphan tests are reported clearly
+- the runner will parse specs deterministically
+- test scaffolding may be generated separately from the spec authoring step
 
 Do not use this skill for teams that explicitly want executable Given/When/Then steps or data-driven step bindings.
 
@@ -32,27 +32,40 @@ Do not use this skill for teams that explicitly want executable Given/When/Then 
 - Do not invent a new DSL
 - Do not reimplement Gherkin, Cucumber, Gauge, or similar step-based systems
 - Do not pass data tables or strings from specs into test functions
-- Do not use AI at runtime to interpret specification prose
-- Keep the spec readable and the test native to the stack
-- Follow exact naming for deterministic matching
+- Keep the spec readable and deterministic to parse
+- Do not make this skill responsible for generating or filling test files
 
 ## Expected Project Shape
 
-By default, assume this layout:
+By default, assume specifications live under:
 
 ```text
 specs/
-test/specs/
 ```
 
 Example:
 
 ```text
 specs/auth/login.md
-test/specs/auth/login_test.exs
 ```
 
-The path is mirrored between specs and tests. Use ecosystem-specific file suffixes.
+The runner may later use mirrored paths to generate or discover test files, but this skill focuses only on authoring the Markdown spec.
+
+## What This Skill Produces
+
+This skill should produce:
+
+- valid Markdown spec files
+- clear scenario names
+- concrete assertion bullets
+- helpful prose that remains non-executable
+
+This skill should not produce:
+
+- test scaffolding
+- test implementation
+- runner installation changes
+- stack-specific test code
 
 ## Required Spec Rules
 
@@ -117,102 +130,33 @@ Assertions:
 - Increments failed attempt counter
 ```
 
-## Matching Rules
+## Context And Prose
 
-The native tests must match the spec by:
+Use normal prose to capture context, constraints, and examples.
 
-- mirrored file path
-- exact scenario name
-- exact assertion text
+- prose above `Assertions:` is allowed
+- prose should help humans and future agents understand intent
+- prose is documentation only unless the runner explicitly chooses to display it
 
-Do not use fuzzy matching.
+Do not turn prose into executable sections.
 
-Prefer exact title reuse by copying scenario and assertion text from the spec into test names.
+## Review Checklist
 
-## Elixir Example
-
-Spec file:
-
-```text
-specs/auth/login.md
-```
-
-Test file:
-
-```text
-test/specs/auth/login_test.exs
-```
-
-Test code:
-
-```elixir
-defmodule MyApp.Auth.LoginTest do
-  use ExUnit.Case, async: true
-
-  describe "Successful login" do
-    test "Creates a session with valid credentials" do
-      # arrange, act, assert in native ExUnit style
-    end
-
-    test "Returns a session token" do
-      # ...
-    end
-  end
-
-  describe "Failed login" do
-    test "Rejects invalid password" do
-      # ...
-    end
-
-    test "Increments failed attempt counter" do
-      # ...
-    end
-  end
-end
-```
-
-## TypeScript Example
-
-```ts
-describe("Successful login", () => {
-  test("Creates a session with valid credentials", () => {
-    // arrange, act, assert in native test style
-  })
-
-  test("Returns a session token", () => {
-    // ...
-  })
-})
-```
-
-If the target runner does not support `describe`, preserve the same logical mapping using the ecosystem's normal naming convention.
-
-## Arrange, Act, Assert
-
-Keep arrange, act, and assert in test code.
-
-Do not try to map Markdown sections directly to setup hooks, actions, or assertions.
-
-The spec describes behavior.
-The test owns setup and execution details.
-
-If the user wants to document context, write it as normal prose above `Assertions:`.
-
-## Validation Checklist
-
-- every spec file has a matching test file when implementation exists
-- every `Scenario:` has a matching grouped test construct or equivalent
-- every assertion bullet has a matching test case name
-- there are no unexpected orphan test items in the spec-mapped test directory
-
-When reviewing mismatches, prefer renaming for consistency over adding aliasing rules.
+- the file has exactly one H1 heading
+- every scenario heading uses the exact `Scenario:` prefix
+- every assertion bullet is specific and testable
+- scenario names are unique within the file
+- assertion text is unique within each scenario
+- the wording avoids implementation details when possible
 
 ## What To Avoid
 
 - adding `Given`, `When`, `Then` semantics or equivalent executable sections
-- deriving test names semantically from prose
-- introducing hidden naming normalization rules
 - using broad scenario titles with vague assertions
 - putting implementation details into assertion names
-- making the spec format depend on test framework internals
 - adding setup or action sections that the runner must execute
+
+## Related Skills
+
+- Use `runner-setup` to install or extend the runner
+- Use `test-scaffold-implementation` to fill generated test scaffolding
