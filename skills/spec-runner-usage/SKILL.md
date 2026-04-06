@@ -1,23 +1,23 @@
 ---
 name: spec-runner-usage
-description: Use a specs runner to run specs, generate test implementation scaffolding, and return specs filtered by status.
+description: Run Markdown specifications as tests.
 ---
 
 # Spec Runner Usage
 
-Use this skill when the user wants to interact with a specs runner after the methodology is already in place.
+This skills describes the features expected from a specs-runner and how to use it effectively. It assumes the project already has a specs-runner installed and focuses on how to interact with it.
 
 ## Purpose
 
 Use this skill when the user wants to:
 
-- run specs
+- verify assertions in Markdown specs
 - generate test implementation scaffolding from specs
 - return specs filtered by status
 
 ## Core Capabilities
 
-Assume a specs runner provides these core capabilities regardless of stack:
+Assume a specs-runner provides these core capabilities regardless of stack:
 
 - run and report specs
 - generate test implementation scaffolding from specs
@@ -59,7 +59,7 @@ Examples:
 - Elixir with ExUnit
 - TypeScript with Jest or Vitest
 
-### 2. Discover The Specs Runner Commands
+### 2. Discover The specs-runner Commands
 
 Use the project's help command or equivalent discovery mechanism.
 
@@ -75,7 +75,7 @@ Identify the commands for:
 - generating test scaffolding
 - filtering specs by status
 
-If the project does not expose these commands clearly, ask one short question.
+If the project does not expose these commands clearly, ask one short question, or if the user wants to install a specs-runner or build it based on specifications provided in this repository.
 
 ### 3. Run Specs
 
@@ -94,18 +94,20 @@ When the user wants test implementation scaffolding:
 - inspect the generated files
 - preserve generated names and structure
 
-### 5. Return Specs Filtered By Status
+### 5. Return Specs Filtered By Status Or Scope
 
 When the user wants only a subset of specs:
 
 - use the project's status filtering option when available
+- use the project's single-spec option when the user wants to run one Markdown spec file
 - otherwise run the specs command and extract the requested statuses from the output
 
-Examples of useful filters:
+Examples of useful filters and scopes:
 
 - pending specs
 - failing specs
 - orphaned specs or tests
+- a single spec file such as `specs/my_spec.md`
 
 ## Output Expectations
 
@@ -119,7 +121,7 @@ Look for:
 
 ## Native Runner Expectations
 
-The specs runner complements the native test runner.
+The specs-runner complements the native test runner.
 
 The project's normal test commands should still work.
 
@@ -129,4 +131,4 @@ The project's normal test commands should still work.
 - inventing runner commands that do not exist in the project
 - renaming generated scaffolding casually
 - changing spec wording while only trying to run or inspect the runner
-- replacing the native test runner with the specs runner
+- replacing the native test runner with the specs-runner
