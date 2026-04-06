@@ -82,6 +82,7 @@ Assertions:
 
 Scenario names should:
 
+- try to avoid third-person phrasing
 - describe one coherent situation
 - be short and stable
 - be unique within the file
@@ -90,13 +91,17 @@ Scenario names should:
 
 Assertion bullets should:
 
+- be concise
 - describe observable outcomes
 - be concrete and specific
+- be phrased so a runner or test can verify them directly
 - avoid implementation details when possible
 - be unique within the scenario
 - represent one independently testable behavior
 
 If an assertion combines multiple outcomes that should be validated independently, split it.
+
+If a statement explains rules, naming conventions, mapping details, or implementation guidance rather than an observable outcome, put it in prose instead of `Assertions:`.
 
 ### Prose
 
@@ -157,6 +162,7 @@ Assertions:
 - every scenario heading uses the exact `Scenario:` prefix
 - scenario headings are H2 headings
 - any H2 heading without the `Scenario:` prefix is treated as documentation only
+- scenario names avoid third-person phrasing when possible
 - every assertion bullet is specific and testable
 - scenario names are unique within the file
 - assertion text is unique within each scenario

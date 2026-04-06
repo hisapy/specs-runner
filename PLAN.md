@@ -27,6 +27,7 @@ This repository provides:
 - `## Scenario: ...` is the required scenario heading format
 - `Assertions:` contains the bullet list of testable behaviors
 - the format stays simple and deterministic
+- `blueprint.md` is being deprecated and its behavioral contract should move into specs under `specs/`
 
 ### Runner Capabilities
 
@@ -57,10 +58,12 @@ Examples:
 - [x] Initialize the repository structure
 - [x] Write the blueprint
 - [x] Write the AI skills
+- [ ] Remove `blueprint.md` after its remaining guidance has been moved into specs
 
 ### Phase 2: Specs For The Runner
 
-- [ ] Write specs for running and reporting specs
+- [x] Write specs for running and reporting specs
+- [ ] Write specs for spec parsing and validation failures
 - [ ] Write specs for generating test scaffolding
 - [ ] Write specs for filtering specs by status
 
@@ -101,9 +104,15 @@ Examples:
 ### Task 4: Runner Specs
 
 - [ ] Add specs under `specs/` for:
-- [ ] running and reporting specs
+- [x] running and reporting specs
+- [ ] spec parsing and validation failures
 - [ ] generating test scaffolding
 - [ ] filtering specs by status
+
+### Task 4.1: Blueprint Deprecation
+
+- [ ] Move remaining behavioral guidance from `blueprint.md` into specs under `specs/`
+- [ ] Remove `blueprint.md`
 
 ### Task 5: Elixir Runner Commands
 
