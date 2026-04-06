@@ -54,6 +54,7 @@ Each specification file must use:
 
 - exactly one H1 heading for the file title
 - zero or more H2 headings using the exact prefix `Scenario:`
+- any H2 heading that does not start with `Scenario:` is treated as prose only, not as a scenario
 - optional prose where it helps explain intent
 - an `Assertions:` section under each scenario when testable behaviors are listed
 - bullet items directly under `Assertions:` for each testable behavior
@@ -106,6 +107,8 @@ Use normal prose to describe:
 - examples
 - intent
 
+Additional H2 headings are allowed for documentation, but if they do not start with `Scenario:` they are not executable and do not define scenarios.
+
 Prose is documentation only. It is not executable.
 
 ## Good And Bad Assertions
@@ -153,6 +156,7 @@ Assertions:
 - the file has exactly one H1 heading
 - every scenario heading uses the exact `Scenario:` prefix
 - scenario headings are H2 headings
+- any H2 heading without the `Scenario:` prefix is treated as documentation only
 - every assertion bullet is specific and testable
 - scenario names are unique within the file
 - assertion text is unique within each scenario
