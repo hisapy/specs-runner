@@ -6,7 +6,7 @@ Build a language-agnostic framework for:
 
 - writing specifications in Markdown
 - building a specs runner with deterministic behavior
-- using that runner to run specs, generate scaffolding, and inspect status
+- using that runner to run acceptance-test style specs, generate scaffolding, and inspect status
 
 The first reference implementation will be in Elixir.
 
@@ -24,10 +24,20 @@ This repository provides:
 ### Specification Format
 
 - specs are Markdown files
+- each spec file must contain at least one `## Scenario: ...` heading
 - `## Scenario: ...` is the required scenario heading format
 - `Assertions:` contains the bullet list of testable behaviors
-- the format stays simple and deterministic
-- `blueprint.md` is being deprecated and its behavioral contract should move into specs under `specs/`
+- prose guides implementation in an SDD workflow without becoming executable syntax
+- the format stays simple, high-level, and deterministic
+- `blueprint.md` is the lightweight canonical contract for the repository
+- detailed common behavior belongs in specs under `specs/runner/`
+- ecosystem-specific behavior belongs in runner specs such as `specs/elixir_runner_spec.md`
+
+### Testing Model
+
+- specs are written as high-level acceptance tests
+- specs map to native tests through runner-specific conventions
+- the runner reports specification implementation status from native test results
 
 ### Runner Capabilities
 
@@ -47,7 +57,7 @@ Examples:
 
 ### AI Responsibilities
 
-- `spec-authoring` is the canonical guide for writing Markdown specs
+- `spec-authoring` is the canonical guide for writing runnable Markdown specs
 - `spec-runner-usage` is the guide for interacting with a specs runner
 - runner execution stays deterministic and does not depend on AI
 
@@ -58,7 +68,7 @@ Examples:
 - [x] Initialize the repository structure
 - [x] Write the blueprint
 - [x] Write the AI skills
-- [ ] Remove `blueprint.md` after its remaining guidance has been moved into specs
+- [x] Establish `blueprint.md` as the lightweight canonical contract
 
 ### Phase 2: Specs For The Runner
 
@@ -66,6 +76,7 @@ Examples:
 - [ ] Write specs for spec parsing and validation failures
 - [ ] Write specs for generating test scaffolding
 - [ ] Write specs for filtering specs by status
+- [x] Write the Elixir-specific runner spec scaffold
 
 ### Phase 3: Elixir Runner
 
@@ -91,8 +102,9 @@ Examples:
 ### Task 2: Spec Authoring Skill
 
 - [x] Canonical Markdown format
-- [x] Example spec
+- [x] Example specs
 - [x] Review checklist
+- [x] SDD-oriented prose guidance
 
 ### Task 3: Spec Runner Usage Skill
 
@@ -108,11 +120,7 @@ Examples:
 - [ ] spec parsing and validation failures
 - [ ] generating test scaffolding
 - [ ] filtering specs by status
-
-### Task 4.1: Blueprint Deprecation
-
-- [ ] Move remaining behavioral guidance from `blueprint.md` into specs under `specs/`
-- [ ] Remove `blueprint.md`
+- [x] elixir runner contract scaffold
 
 ### Task 5: Elixir Runner Commands
 
