@@ -2,37 +2,38 @@
 
 This document is a _lightweight_ language-agnostic blueprint for a `specs-runner`.
 
-A `specs-runner` is a tool for testing assertions in software specifications written in Markdown.
+A `specs-runner` is a tool for testing software specifications written in Markdown.
 
-The idea is to facilitate Spec-Driven Development (SDD) and make specifications live documentation by:
+The idea is to make specifications live documentation by:
 
 - writing specifications in Markdown
 - mapping specifications to _acceptance_ tests
 - reporting specification test and implementation status
 
-In a way, this is similar to tools like Cucumber but using a simpler format in Markdown instead of Gherkin.
+In a way, this is similar to Behavior Drive Development (BDD) tools like Cucumber but using a simpler format in Markdown instead of Gherkin.
 
 ## Specifications Format
 
 Each specification file written in Markdown should have:
 
 - Exactly one H1 `title`
-- One or more H2 `Scenario:` prefixed subheadings
-- Inside scenarios, one `Assertions:` line and below it, a bullet list of testable behaviors
+- One H2 `Acceptance Criteria` section
+- Inside `Acceptance Criteria`, zero or more H3 `Scenario:` prefixed subheadings
+- Bullet list items for testable behaviors under `Acceptance Criteria` or under a `Scenario:` subsection
 
 The key elements considered by the `specs-runner` are:
 
 - **Title**: a short, high-level description of the feature or requirement to be implemented
-- **Scenarios**: the behavior of the feature or requirement is described in different scenarios
-- **Assertions**: represent specific conditions that must be met
+- **Acceptance criteria**: specific conditions that must be met
+- **Scenarios**: optional groupings for related acceptance criteria
 
-All other prose is documentation only that can be used to build the specified feature or requirement.
+All other prose is documentation only that should guide a developer (or AI coding agent) to build the specified feature or requirement.
 
 Nevertheless, the specifications should:
 
 - be clear and concise
 - include just enough information to build a required feature or software functionality
-- describe the behavior of the feature or functionality in specific situations or **scenarios**
+- provide a clear acceptance criteria optionally grouped in specific situations or **scenarios**
 
 Example:
 
@@ -41,20 +42,18 @@ Example:
 
 Users can authenticate with email and password.
 
-## Scenario: Successful login
+## Acceptance Criteria
+
+### Scenario: Successful login
 
 The user provides valid credentials.
-
-Assertions:
 
 - Creates a session with valid credentials
 - Returns a session token
 
-## Scenario: Failed login
+### Scenario: Failed login
 
 The user provides an invalid password.
-
-Assertions:
 
 - Rejects invalid password
 - Increments failed attempt counter
@@ -62,49 +61,55 @@ Assertions:
 
 ## Runtime Behavior
 
-To test assertions in specifications, the `specs-runner` should:
+To test specifications, the `specs-runner` should:
 
 - read specs from Markdown files
-- match specs, scenarios, and assertions to existing acceptance tests
+- match specs, acceptance criteria, and scenarios to existing acceptance tests in the codebase
 - run the matched tests
 - report the status of the specs based on the test results
 
 The output report should show:
 
-- spec titles, scenarios, assertions
+- spec titles, acceptance criteria, and scenarios
 - status of each of the above items
 - summary totals
 
 ## Matching Specs with Tests
 
 - One spec `.md` file should match a test file
-- Each runner defines its own spec test directory within the native test layout
-- Scenario names map to the native grouping construct when available
-- Assertion text maps to native test case names
-- Matching is exact by default
+- Each runner defines its own spec test directory
+- Acceptance criteria items map to test case names
+- Scenario names map to test grouping construct when available
+- Matching is exact by default (case-sensitive)
 
 To simplify file matching, it is recommended to place the specifications in the `specs` directory at the root of the repo, and all the corresponding _acceptance_ tests in a specific directory, e.g., `test/specs`.
 
 Example:
 
-`## Scenario: Login Failed` would match a `describe("Login Failed")` block inside a test.
-
-And
-
 ```md
-Assertions:
+## Acceptance Criteria
+
+### Scenario: Login Failed
 
 - rejects invalid password
 ```
 
-would match a `it("rejects invalid password")` test.
+would match something like the following inside a test
+
+```javascript
+// file: __tests__/spec/login.test.ts
+
+describe("Login Failed", () => {
+  it("rejects invalid password")
+}
+```
 
 ## About Statuses
 
-- `passed` - a spec passes when all its assertions pass
-- `failed` - a spec fails when any of its assertions fails
-- `pending` - a spec, scenario, or assertion is pending if there are no corresponding tests
-- `orphan` - a test file, test group, or test is considered orphan if its corresponding spec, scenario, or assertion is not found in the expected `specs` directory
+- `passed` - a spec passes when all its acceptance criteria pass
+- `failed` - a spec fails when any of its acceptance criteria fails
+- `pending` - a spec, acceptance critieria or scenario is pending if there are no matching tests
+- `orphan` - a test file, test group, or test is considered orphan if its matching spec, scenario, or acceptance criterion is not found in the expected `specs` directory
 
 ## Implementation Guidelines
 
@@ -112,8 +117,8 @@ The `specs-runner` should use the existing native test framework already used in
 
 Ideally, if the test runner can emit structured output, like `ExUnit`, test execution should be similar to a pipeline with the following stages:
 
-1. **Discovery**: specs, scenarios, assertions are loaded and prepared to be mapped
-2. **Test run**: the native test runner can run all the tests in the specific directory for spec tests
+1. **Discovery**: specs, acceptance criteria, and scenarios are loaded and prepared to be mapped
+2. **Test run**: the test runner can run the expected tests
 3. **Result mapping**: the results are matched with the specs
 4. **Report**: the matched specs and tests are reported accordingly
 
@@ -130,5 +135,5 @@ Eventually, the `specs-runner` should also provide options for:
 
 - generating test scaffolding for pending specs (test files, classes, describe blocks, or tests)
 - running tests with filters, e.g., filter specific specs to test
-- marking specs as skipped or ignored in case we don't want to implement tests for specific spec files, scenarios or assertions
-- validating specs format, e.g., checking missing title or missing assertions in scenarios
+- marking specs as skipped or ignored in case we don't want to implement tests for specific spec files, scenarios, or acceptance criteria
+- validating specs format, e.g., checking missing title or missing acceptance criteria

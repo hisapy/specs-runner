@@ -11,7 +11,7 @@ This skills describes the features expected from a specs-runner and how to use i
 
 Use this skill when the user wants to:
 
-- verify assertions in Markdown specs
+- verify acceptance criteria in Markdown specs
 - generate test implementation scaffolding from specs
 - return specs filtered by status
 

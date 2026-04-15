@@ -1,6 +1,6 @@
 # specs-runner
 
-This repository describes a _framework_ for writing testable software specifications in Markdown.
+This repository describes a _framework_ for writing testable software specifications in Markdown. This sits somewhere between Spec-Driven Development (SDD) and Behavior-Driven Development (BDD).
 
 It provides:
 

@@ -24,14 +24,14 @@ This repository provides:
 ### Specification Format
 
 - specs are Markdown files
-- each spec file must contain at least one `## Scenario: ...` heading
-- `## Scenario: ...` is the required scenario heading format
-- `Assertions:` contains the bullet list of testable behaviors
+- each spec file must contain exactly one `## Acceptance Criteria` section
+- `### Scenario: ...` is an optional grouping inside `Acceptance Criteria`
+- bullet items under `Acceptance Criteria` define testable behaviors
 - prose guides implementation in an SDD workflow without becoming executable syntax
 - the format stays simple, high-level, and deterministic
 - `blueprint.md` is the lightweight canonical contract for the repository
 - detailed common behavior belongs in specs under `specs/runner/`
-- ecosystem-specific behavior belongs in runner specs such as `specs/elixir_runner_spec.md`
+- ecosystem-specific behavior belongs in runner specs such as `specs/elixir_runner/run_specs.md`
 
 ### Testing Model
 
