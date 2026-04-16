@@ -30,7 +30,9 @@ The specs and tests directory should be configurable:
 
 When `mix specs.run` is executed, the output should report the status of the specs, acceptance criteria and scenarios tested.
 
-### Scenario: Missgin test file
+For testing this, both specs and tests should be provided as fixtures.
+
+### Scenario: Missing test file
 
 - reports the spec as pending
 - shows the name of the missing test file
