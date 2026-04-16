@@ -16,8 +16,8 @@ A more verbose or documentation-like format might be documented in another spec 
 - the tests directory, e.g., `test/specs` should mirror the strucutre of the specs dir
 - `.md` files should match a test file in the test dir, e.g., `specs/login.md` and `test/specs/login_test.exs`
 - acceptance criteria items should match `test` blocks
-- acceptance criteria items may match tests directly without a `describe` block when no scenarios are used
 - `Scenario:` in spec should match a `describe` block in a test file when scenarios are used
+- acceptance criteria items may match tests directly without a `describe` block when no scenarios are used
 
 ### Configuration
 
