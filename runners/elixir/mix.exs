@@ -7,6 +7,7 @@ defmodule SpecsRunner.MixProject do
       version: "0.1.0",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps()
     ]
   end
@@ -18,10 +19,27 @@ defmodule SpecsRunner.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  def cli do
+    [
+      preferred_envs: [ci: :test]
+    ]
+  end
+
   defp deps do
     [
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      ci: [
+        "format --check-formatted",
+        "compile --warnings-as-errors",
+        "deps.unlock --unused",
+        "credo",
+        "test"
+      ]
     ]
   end
 end

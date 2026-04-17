@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  elixir-runner:
+  elixir-specs-runner:
     runs-on: ubuntu-latest
 
     defaults:
@@ -13,17 +13,15 @@ jobs:
         working-directory: runners/elixir
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Erlang and Elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: '27.2'
-          elixir-version: '1.18.3'
+          version-file: .tool-versions
 
       - name: Install dependencies
         run: mix deps.get
 
-      - name: Run tests
-        run: mix test
+      - name: Run checks and tests
+        run: mix ci
