@@ -6,6 +6,6 @@ It provides:
 
 - a concise common contract in `blueprint.md`
 - an AI skill for spec authoring: `skills/spec-authoring/SKILL.md`
-- specs for building a specs runner under `specs/`
-- an Elixir runner scaffold spec: `specs/elixir_runner_spec.md`
+- specs for building a specs runner in [specs](./specs/)
+- default runner implementations in [runners](./runners)
 - an AI skill for using a specs runner: `skills/spec-runner-usage/SKILL.md`

@@ -31,7 +31,7 @@ This repository provides:
 - the format stays simple, high-level, and deterministic
 - `blueprint.md` is the lightweight canonical contract for the repository
 - detailed common behavior belongs in specs under `specs/runner/`
-- ecosystem-specific behavior belongs in runner specs such as `specs/elixir_runner/run_specs.md`
+- ecosystem-specific behavior belongs in runner specs such as `specs/elixir/run_specs.md`
 
 ### Testing Model
 
