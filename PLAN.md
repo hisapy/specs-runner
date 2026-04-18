@@ -30,7 +30,6 @@ This repository provides:
 - prose guides implementation in an SDD workflow without becoming executable syntax
 - the format stays simple, high-level, and deterministic
 - `blueprint.md` is the lightweight canonical contract for the repository
-- detailed common behavior belongs in specs under `specs/runner/`
 - ecosystem-specific behavior belongs in runner specs such as `specs/elixir/run_specs.md`
 
 ### Testing Model
@@ -76,7 +75,6 @@ Examples:
 - [ ] Write specs for spec parsing and validation failures
 - [ ] Write specs for generating test scaffolding
 - [ ] Write specs for filtering specs by status
-- [x] Write the Elixir-specific runner spec scaffold
 
 ### Phase 3: Elixir Runner
 
@@ -116,7 +114,7 @@ Examples:
 ### Task 4: Runner Specs
 
 - [ ] Add specs under `specs/` for:
-- [x] running and reporting specs
+- [ ] running and reporting specs
 - [ ] spec parsing and validation failures
 - [ ] generating test scaffolding
 - [ ] filtering specs by status
@@ -132,7 +130,7 @@ Examples:
 
 Initial CI runs only the Elixir runner.
 
-- [x] `mix test` in `runners/elixir/`
+- [x] `mix ci` in `runners/elixir/`
 - [ ] run the specs runner in CI once the commands exist
 
 Additional stacks can be added as separate CI jobs later.
