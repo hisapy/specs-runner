@@ -1,0 +1,16 @@
+# Tool-local workspace artifacts
+/.opencode/
+
+# Elixir runner build artifacts
+/runners/elixir/_build/
+/runners/elixir/cover/
+/runners/elixir/deps/
+/runners/elixir/doc/
+/runners/elixir/tmp/
+
+# VM crash dumps
+erl_crash.dump
+
+# Mix archive and package artifacts
+*.ez
+specs_runner-*.tar

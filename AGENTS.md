@@ -18,6 +18,13 @@ This repository defines a framework for Markdown-based executable specifications
 - If changing contracts or behavior definitions, update the source-of-truth docs first, then align dependent docs.
 - Prefer linking to existing docs instead of duplicating guidance in new files.
 - Be alert for stale references: some docs may describe planned paths/commands that are not yet implemented.
+- Keep tool-local workspace directories (for example `.opencode/`) untracked.
+
+## Development Workflow
+
+- Use `feat/test/chore(ecosystem)` for commit scopes, e.g. `test(elixir): add pending spec scenario`.
+- Follow BDD and red-green-refactor: write failing tests first, implement minimally to pass, then refactor.
+- Specs in [specs/](./specs/) are executable behavior contracts—update them before implementation code.
 
 ## Key Directories
 
