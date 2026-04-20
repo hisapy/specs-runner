@@ -2,135 +2,72 @@
 
 ## Goal
 
-Build a language-agnostic framework for:
+Build a language-agnostic framework for writing Markdown specifications and implementing deterministic specs-runners. The first reference implementation is Elixir.
 
-- writing specifications in Markdown
-- building a specs runner with deterministic behavior
-- using that runner to run acceptance-test style specs, generate scaffolding, and inspect status
-
-The first reference implementation will be in Elixir.
-
-## Repository Scope
+## Scope
 
 This repository provides:
 
-- a canonical AI skill for spec authoring
-- specs for building a specs runner under `specs/`
-- an AI skill for using a specs runner
-- runner implementations per ecosystem
+- a canonical contract in `blueprint.md`
+- canonical AI skills in `skills/`
+- runner specs in `specs/`
+- runner implementations in `runners/`
 
-## Current Decisions
+## Execution Model
 
-### Specification Format
+- Specs are behavior-first and deterministic.
+- Specs are matched to native tests through runner-specific conventions.
+- Fixture-based tests are the canonical validation strategy for runner behavior.
+- Running the runner against this repository's own specs is optional and treated as a smoke check only.
 
-- specs are Markdown files
-- each spec file must contain exactly one `## Acceptance Criteria` section
-- `### Scenario: ...` is an optional grouping inside `Acceptance Criteria`
-- bullet items under `Acceptance Criteria` define testable behaviors
-- prose guides implementation in an SDD workflow without becoming executable syntax
-- the format stays simple, high-level, and deterministic
-- `blueprint.md` is the lightweight canonical contract for the repository
-- ecosystem-specific behavior belongs in runner specs such as `specs/elixir/run_specs.md`
+## Roadmap
 
-### Testing Model
+### 1. Foundation
 
-- specs are written as high-level acceptance tests
-- specs map to native tests through runner-specific conventions
-- the runner reports specification implementation status from native test results
+- [x] Establish repository structure and conventions
+- [x] Define the canonical blueprint contract
+- [x] Create initial AI skills (`spec-authoring`, `spec-runner-usage`)
+- [x] Bootstrap Elixir runner project under `runners/elixir/`
+- [x] Establish Elixir CI baseline with `mix ci`
 
-### Runner Capabilities
+### 2. Specs For Elixir Runner
 
-Every specs runner should provide these core capabilities:
+- [ ] Complete and refine `specs/elixir/run_specs.md`
+- [ ] Add scenarios for passed and failed test reporting
+- [ ] Add scenarios for parsing and validation failures
+- [ ] Keep this phase focused on `mix specs.run`
+- [ ] Add separate spec files later for:
+- [ ] generating tests from specs
+- [ ] filtering by status
 
-- run and report specs
-- generate test implementation scaffolding from specs
-- return specs filtered by status
+### 3. Elixir Runner Implementation: `mix specs.run`
 
-If possible, runner commands should use a `specs` prefix.
+- [ ] Implement `mix specs.run` from `specs/elixir/run_specs.md`
+- [ ] Iterate spec <-> fixture tests until behavior is stable
+- [ ] Ensure output reports spec/scenario/criteria status clearly
+- [ ] Validate with `mix ci` in `runners/elixir/`
 
-Examples:
+### 4. Publish Elixir Runner (GitHub -> Hex)
 
-- `mix specs.run`
-- `mix specs.gen.tests specs/my_spec.md`
-- `npm run specs.run`
+- [ ] Prepare package metadata and docs for install via GitHub
+- [ ] Verify install/use from a separate sample repository
+- [ ] Publish an initial GitHub-installable release
+- [ ] Prepare Hex package metadata and release checklist
+- [ ] Publish to Hex when release quality is acceptable
 
-### AI Responsibilities
+### 5. Elixir Mix Task For Generating Tests
 
-- `spec-authoring` is the canonical guide for writing runnable Markdown specs
-- `spec-runner-usage` is the guide for interacting with a specs runner
-- runner execution stays deterministic and does not depend on AI
-
-## Phases
-
-### Phase 1: Foundation
-
-- [x] Initialize the repository structure
-- [x] Write the blueprint
-- [x] Write the AI skills
-- [x] Establish `blueprint.md` as the lightweight canonical contract
-
-### Phase 2: Specs For The Runner
-
-- [x] Write specs for running and reporting specs
-- [ ] Write specs for spec parsing and validation failures
-- [ ] Write specs for generating test scaffolding
-- [ ] Write specs for filtering specs by status
-
-### Phase 3: Elixir Runner
-
-- [ ] Implement Elixir command discovery and entry points
-- [ ] Implement `mix specs.run`
+- [ ] Write dedicated specs for `mix specs.gen.tests`
 - [ ] Implement `mix specs.gen.tests`
-- [ ] Implement status filtering
+- [ ] Validate generated scaffolding shape and naming via fixture tests
 
-### Phase 4: Validation
+### 6. Add Filtering Options For Elixir Runner
 
-- [ ] Run the Elixir runner against this repository's own specs
-- [ ] Add a minimal example flow
+- [ ] Write dedicated specs for status filtering
+- [ ] Implement filtering options for runner output and scope
+- [ ] Validate filtering behavior with fixture-based tests
 
-## Near-Term Tasks
+## Release Policy
 
-### Task 1: Foundation
-
-- [x] Root repository structure
-- [x] Elixir runner scaffold under `runners/elixir/`
-- [x] Initial CI for Elixir
-- [x] Core docs and skills
-
-### Task 2: Spec Authoring Skill
-
-- [x] Canonical Markdown format
-- [x] Example specs
-- [x] Review checklist
-- [x] SDD-oriented prose guidance
-
-### Task 3: Spec Runner Usage Skill
-
-- [x] Run specs guidance
-- [x] Scaffolding guidance
-- [x] Status filtering guidance
-- [x] Command discovery guidance
-
-### Task 4: Runner Specs
-
-- [ ] Add specs under `specs/` for:
-- [ ] running and reporting specs
-- [ ] spec parsing and validation failures
-- [ ] generating test scaffolding
-- [ ] filtering specs by status
-- [x] elixir runner contract scaffold
-
-### Task 5: Elixir Runner Commands
-
-- [ ] Implement `mix specs.run`
-- [ ] Implement `mix specs.gen.tests`
-- [ ] Implement status filtering support
-
-## CI
-
-Initial CI runs only the Elixir runner.
-
-- [x] `mix ci` in `runners/elixir/`
-- [ ] run the specs runner in CI once the commands exist
-
-Additional stacks can be added as separate CI jobs later.
+- Version targets are iterative and feedback-driven from real usage in another repository.
+- `v1.0` criteria are intentionally deferred and will be decided from implementation feedback.
