@@ -6,13 +6,10 @@ defmodule SpecsRunner.Specs.RunTest do
 
   describe "Missing test file" do
     test "reports the spec as pending" do
-      specs_dir = Path.expand("../fixtures/specs", __DIR__)
-      tests_dir = Path.expand("../fixtures/test_specs", __DIR__)
-
       output =
         capture_io(fn ->
           Mix.Task.reenable("specs.run")
-          Mix.Task.run("specs.run", ["--specs-dir", specs_dir, "--tests-dir", tests_dir])
+          Mix.Task.run("specs.run", [])
         end)
 
       assert output =~ ~r/\[pending\]\s+Pending Spec/
