@@ -1,17 +1,20 @@
 defmodule SpecsRunner do
   @moduledoc false
 
-  @type options :: %{specs_dir: String.t(), tests_dir: String.t()}
-
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
-    :ok
-    # options = %{specs_dir: specs_dir, tests_dir: tests_dir}
+    with :ok <- validate_dir(specs_dir),
+         :ok <- validate_dir(tests_dir) do
+      {:ok, nil}
+      # %{specs_dir: specs_dir, tests_dir: tests_dir}
+      # |> discover_specs()
+      # |> match_specs()
+      # |> format_report()
+      # |> emit_report()
+    end
+  end
 
-    # options
-    # |> discover_specs()
-    # |> match_specs()
-    # |> format_report()
-    # |> emit_report()
+  defp validate_dir(path) do
+    if File.dir?(path), do: :ok, else: {:error, "#{path}: Directory not found"}
   end
 
   # # Boundary placeholder: spec discovery is implemented in a later increment.

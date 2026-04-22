@@ -15,6 +15,14 @@ defmodule SpecsRunner.Specs.RunTest do
       assert output =~ ~r/\[pending\]\s+Pending Spec/
     end
 
-    test "shows the name of the missing test file"
+    test "shows the name of the missing test file" do
+      output =
+        capture_io(fn ->
+          Mix.Task.reenable("specs.run")
+          Mix.Task.run("specs.run", [])
+        end)
+
+      assert output =~ "pending_test.exs"
+    end
   end
 end
