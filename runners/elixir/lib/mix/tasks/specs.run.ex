@@ -46,7 +46,10 @@ defmodule Mix.Tasks.Specs.Run do
     specs_dir = req_non_empty_str!(options, :specs_dir)
     tests_dir = req_non_empty_str!(options, :tests_dir)
 
-    SpecsRunner.run(specs_dir, tests_dir)
+    case SpecsRunner.run(specs_dir, tests_dir) do
+      :ok -> :ok
+      {:error, reason} -> Mix.raise("specs.run failed: #{inspect(reason)}")
+    end
   end
 
   defp req_non_empty_str!(opts, key) do
