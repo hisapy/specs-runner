@@ -6,8 +6,10 @@ defmodule SpecsRunnerTest do
   @tests_dir Application.compile_env(:specs_runner, :tests_dir)
 
   describe "run(specs_dir, tests_dir)" do
-    @tag :skip
-    test "returns {:ok, result} when completed successfully"
+    test "returns {:ok, result} when completed successfully" do
+      assert {:ok, %SpecsRunner.Result{specs_dir: @specs_dir, tests_dir: @tests_dir}} =
+               SpecsRunner.run(@specs_dir, @tests_dir)
+    end
 
     test "returns {:error, reason} when the specs_dir is not found" do
       specs_dir = "invalid/specs/dir"

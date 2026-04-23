@@ -4,12 +4,14 @@ defmodule SpecsRunner do
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
     with :ok <- validate_dir(specs_dir),
          :ok <- validate_dir(tests_dir) do
-      {:ok, nil}
-      # %{specs_dir: specs_dir, tests_dir: tests_dir}
-      # |> discover_specs()
+      result = %SpecsRunner.Result{specs_dir: specs_dir, tests_dir: tests_dir}
+
+      result
+      |> discover_specs()
       # |> match_specs()
       # |> format_report()
       # |> emit_report()
+      |> then(&{:ok, &1})
     end
   end
 
@@ -17,18 +19,19 @@ defmodule SpecsRunner do
     if File.dir?(path), do: :ok, else: {:error, "#{path}: Directory not found"}
   end
 
-  # # Boundary placeholder: spec discovery is implemented in a later increment.
-  # defp discover_specs(options), do: options
+  defp discover_specs(%SpecsRunner.Result{specs_dir: specs_dir} = result) do
+    {:ok, spec_paths} = SpecsRunner.SpecsFile.list(specs_dir)
+    %{result | total: length(spec_paths)}
+  end
 
-  # # Core placeholder: matching/classification is implemented in a later increment.
-  # defp match_specs(options), do: options
+  # Core placeholder: matching/classification is implemented in a later increment.
+  # defp match_specs(result), do: result
 
-  # # Core placeholder: report formatting is implemented in a later increment.
-  # defp format_report(_options), do: []
+  # Core placeholder: report formatting is implemented in a later increment.
+  # defp format_report(result), do: result
 
-  # # Boundary placeholder: output emission is implemented in a later increment.
-  # defp emit_report(lines) when is_list(lines) do
-  #   Enum.each(lines, &IO.puts/1)
+  # Boundary placeholder: output emission is implemented in a later increment.
+  # defp emit_report(result) do
   #   :ok
   # end
 end
