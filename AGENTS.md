@@ -36,3 +36,19 @@ This repository defines a framework for Markdown-based executable specifications
 - There is no guaranteed root-level build/test command for the whole repo.
 - CI targets runners in the `runners` directory
 - Specs for specific implementations should be validated against the [blueprint](./blueprint.md) and the guidelines in the [spec-authoring](./skills/spec-authoring/SKILL.md)
+- Validation is required after code changes.
+- Use the validation command(s) defined in the nearest applicable subdirectory `AGENTS.md` file (for example, `runners/elixir/AGENTS.md`).
+- If changes span multiple runner ecosystems, run all applicable validations for each affected ecosystem.
+
+## Ok implement
+
+- Use this flow when the user reply is exactly "ok implement".
+- Treat prior planning/discussion in the thread as approved implementation scope.
+- Apply the agreed changes without re-explaining the planned edits.
+- Run all required validation command(s) for affected ecosystems.
+- Report completion/status and validation outcome only.
+- Explain file changes only when the user explicitly asks for an explanation.
+
+## Agent Interaction
+
+- Keep responses concise and action-oriented by default.
