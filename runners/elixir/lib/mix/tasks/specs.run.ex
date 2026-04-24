@@ -41,15 +41,34 @@ defmodule Mix.Tasks.Specs.Run do
   def run(args) do
     {opts, _argv} = OptionParser.parse!(args, strict: @options)
     default_opts = Application.get_all_env(:specs_runner)
+
     options = Keyword.merge(default_opts, opts)
 
     specs_dir = req_non_empty_str!(options, :specs_dir)
     tests_dir = req_non_empty_str!(options, :tests_dir)
 
     case SpecsRunner.run(specs_dir, tests_dir) do
-      {:ok, _result} -> :ok
-      {:error, reason} -> Mix.raise("specs.run failed: #{inspect(reason)}")
+      {:ok, result} ->
+        result
+        |> format_summary()
+        |> Mix.shell().info()
+
+        :ok
+
+      {:error, reason} ->
+        Mix.raise("specs.run failed: #{inspect(reason)}")
     end
+  end
+
+  defp format_summary(%SpecsRunner.Result{} = result) do
+    [
+      "Summary",
+      "Total: #{result.total}",
+      "Pending: #{result.pending}",
+      "Passed: #{result.passed}",
+      "Failed: #{result.failed}"
+    ]
+    |> Enum.join("\n")
   end
 
   defp req_non_empty_str!(opts, key) do
