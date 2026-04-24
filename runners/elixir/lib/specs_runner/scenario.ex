@@ -1,6 +1,8 @@
 defmodule SpecsRunner.Scenario do
   @moduledoc false
 
+  alias SpecsRunner.Test
+
   defstruct title: nil,
             status: :unknown,
             tests: [],
@@ -14,4 +16,9 @@ defmodule SpecsRunner.Scenario do
           tests: [SpecsRunner.Test.t()],
           error: String.t() | nil
         }
+
+  @spec add_test(t(), Test.t()) :: t()
+  def add_test(%__MODULE__{} = scenario, %Test{} = test) do
+    %{scenario | tests: scenario.tests ++ [test]}
+  end
 end
