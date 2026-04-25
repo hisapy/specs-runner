@@ -9,7 +9,7 @@ An Elixir Mix task called `specs.run` that implements the `specs-runner` [bluepr
 
 The default output format should be similar to ExUnit's output.
 
-A more verbose or documentation-like format might be documented in another spec file.
+A more verbose or documentation-like output might be documented in another spec file.
 
 ## Matching spec files to ExUnit tests
 
