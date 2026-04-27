@@ -3,13 +3,13 @@ defmodule SpecsRunner.Core.Test do
 
   defstruct name: nil,
             status: :pending,
-            error: nil
+            errors: nil
 
   @type status :: :pending | :passed | :failed
 
   @type t :: %__MODULE__{
           name: String.t() | nil,
           status: status(),
-          error: String.t() | nil
+          errors: term() | nil
         }
 end
