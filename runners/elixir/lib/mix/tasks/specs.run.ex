@@ -48,11 +48,7 @@ defmodule Mix.Tasks.Specs.Run do
     tests_dir = req_non_empty_str!(options, :tests_dir)
 
     case SpecsRunner.run(specs_dir, tests_dir) do
-      {:ok, result} ->
-        result
-        |> format_summary()
-        |> Mix.shell().info()
-
+      {:ok, _result} ->
         :ok
 
       {:error, reason} ->
@@ -60,16 +56,16 @@ defmodule Mix.Tasks.Specs.Run do
     end
   end
 
-  defp format_summary(%SpecsRunner.Result{} = result) do
-    [
-      "Summary",
-      "Total: #{result.total}",
-      "Pending: #{result.pending}",
-      "Passed: #{result.passed}",
-      "Failed: #{result.failed}"
-    ]
-    |> Enum.join("\n")
-  end
+  # defp format_summary(%SpecsRunner.Result{} = result) do
+  #   [
+  #     "Summary",
+  #     "Total: #{result.total}",
+  #     "Pending: #{result.pending}",
+  #     "Passed: #{result.passed}",
+  #     "Failed: #{result.failed}"
+  #   ]
+  #   |> Enum.join("\n")
+  # end
 
   defp req_non_empty_str!(opts, key) do
     with {:ok, value} <- Keyword.fetch(opts, key),
