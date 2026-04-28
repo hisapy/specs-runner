@@ -34,15 +34,18 @@ defmodule SpecsRunner.Core.Run do
     }
   end
 
-  def add_test(%__MODULE__{} = run, test_key) do
+  @spec add_test(SpecsRunner.Core.Run.t(), test_key()) :: SpecsRunner.Core.Run.t()
+  def add_test(%__MODULE__{} = run, test_key) when is_tuple(test_key) do
     %{run | tests: Map.put(run.tests, test_key, %Test{})}
   end
 
-  def set_test_passed(%__MODULE__{} = run, test_key) do
+  @spec set_test_passed(SpecsRunner.Core.Run.t(), test_key()) :: SpecsRunner.Core.Run.t()
+  def set_test_passed(%__MODULE__{} = run, test_key) when is_tuple(test_key) do
     %{run | tests: Map.update!(run.tests, test_key, &%{&1 | status: :passed})}
   end
 
-  def set_test_failed(%__MODULE__{} = run, test_key, errors) do
+  @spec set_test_failed(SpecsRunner.Core.Run.t(), test_key(), any()) :: SpecsRunner.Core.Run.t()
+  def set_test_failed(%__MODULE__{} = run, test_key, errors) when is_tuple(test_key) do
     %{run | tests: Map.update!(run.tests, test_key, &%{&1 | status: :failed, errors: errors})}
   end
 end
