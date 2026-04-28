@@ -15,14 +15,14 @@ defmodule SpecsRunner.Core.Run do
             tests_dir: nil,
             start_time: nil,
             end_time: nil,
-            test: %{}
+            tests: %{}
 
   @type t :: %__MODULE__{
           specs_dir: String.t(),
           tests_dir: String.t(),
           start_time: DateTime.t(),
           end_time: DateTime.t(),
-          test: %{test_key() => Test.t()}
+          tests: %{test_key() => Test.t()}
         }
 
   def start(specs_dir, tests_dir) do
@@ -30,19 +30,19 @@ defmodule SpecsRunner.Core.Run do
       specs_dir: specs_dir,
       tests_dir: tests_dir,
       start_time: DateTime.utc_now(),
-      test: %{}
+      tests: %{}
     }
   end
 
   def add_test(%__MODULE__{} = run, test_key) do
-    %{run | test: Map.put(run.test, test_key, %Test{})}
+    %{run | tests: Map.put(run.tests, test_key, %Test{})}
   end
 
   def set_test_passed(%__MODULE__{} = run, test_key) do
-    %{run | test: Map.update!(run.test, test_key, &%{&1 | status: :passed})}
+    %{run | tests: Map.update!(run.tests, test_key, &%{&1 | status: :passed})}
   end
 
   def set_test_failed(%__MODULE__{} = run, test_key, errors) do
-    %{run | test: Map.update!(run.test, test_key, &%{&1 | status: :failed, errors: errors})}
+    %{run | tests: Map.update!(run.tests, test_key, &%{&1 | status: :failed, errors: errors})}
   end
 end

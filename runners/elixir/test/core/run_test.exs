@@ -18,7 +18,7 @@ defmodule SpecsRunner.Core.RunTest do
 
       run = Run.add_test(run, test_key)
 
-      assert run.test == %{
+      assert run.tests == %{
                test_key => %Test{
                  status: :pending,
                  errors: nil
@@ -37,7 +37,7 @@ defmodule SpecsRunner.Core.RunTest do
       run = Run.add_test(run, test_key)
       run = Run.set_test_passed(run, test_key)
 
-      assert run.test[test_key].status == :passed
+      assert run.tests[test_key].status == :passed
     end
   end
 
@@ -52,8 +52,8 @@ defmodule SpecsRunner.Core.RunTest do
       run = Run.add_test(run, test_key)
       run = Run.set_test_failed(run, test_key, errors)
 
-      assert run.test[test_key].status == :failed
-      assert run.test[test_key].errors == errors
+      assert run.tests[test_key].status == :failed
+      assert run.tests[test_key].errors == errors
     end
   end
 end
