@@ -6,11 +6,11 @@ defmodule SpecsRunner.Core.Run do
   alias SpecsRunner.Core.Spec
   alias SpecsRunner.Core.Test
 
-  @type spec_test_file :: String.t()
+  @type spec_file_path :: String.t()
   @type scenario_title :: String.t() | nil
   @type test_name :: String.t()
 
-  @type test_key :: {spec_test_file(), scenario_title(), test_name()}
+  @type test_key :: {spec_file_path(), scenario_title(), test_name()}
 
   defstruct specs_dir: nil,
             tests_dir: nil,
@@ -24,7 +24,7 @@ defmodule SpecsRunner.Core.Run do
           tests_dir: String.t(),
           start_time: DateTime.t(),
           end_time: DateTime.t(),
-          specs: %{spec_test_file() => Spec.t()},
+          specs: %{spec_file_path() => Spec.t()},
           tests: %{test_key() => Test.t()}
         }
 
