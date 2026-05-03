@@ -7,10 +7,13 @@ defmodule SpecsRunnerTest do
 
   describe "run(specs_dir, tests_dir)" do
     test "returns {:ok, result} when completed successfully" do
-      # raise "Not implemented yet"
+      {:ok, result} = SpecsRunner.run(@specs_dir, @tests_dir)
 
-      # assert {:ok, %SpecsRunner.Result{specs_dir: @specs_dir, tests_dir: @tests_dir}} =
-      #          SpecsRunner.run(@specs_dir, @tests_dir)
+      assert result.specs_dir == @specs_dir
+      assert result.tests_dir == @tests_dir
+      assert is_struct(result.start_time, DateTime)
+      assert is_struct(result.end_time, DateTime)
+      assert is_map(result.tests)
     end
 
     test "returns {:error, reason} when the specs_dir is not found" do

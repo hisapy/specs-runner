@@ -3,17 +3,19 @@ defmodule SpecsRunner.Core.Spec do
 
   defstruct title: nil,
             path: nil,
-            status: :pending
+            status: :pending,
+            errors: []
 
   @type status :: :pending | :passed | :failed
 
   @type t :: %__MODULE__{
           title: String.t(),
           path: String.t(),
-          status: status()
+          status: status(),
+          errors: list()
         }
 
-  def new(title, path) do
-    %__MODULE__{title: title, path: path}
+  def new(spec_file_path, title \\ nil) do
+    %__MODULE__{path: spec_file_path, title: title}
   end
 end
