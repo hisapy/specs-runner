@@ -3,19 +3,6 @@ defmodule SpecsRunner.SpecsParser do
 
   alias SpecsRunner.Core.Run
 
-  @type parser_state :: %{
-          run: Run.t(),
-          spec_file_path: String.t(),
-          in_acceptance_criteria?: boolean(),
-          acceptance_criteria_found?: boolean(),
-          has_criteria_tests?: boolean(),
-          current_scenario: String.t() | nil,
-          current_scenario_has_tests?: boolean(),
-          has_any_scenarios?: boolean(),
-          scenario_titles: MapSet.t(String.t()),
-          title_count: non_neg_integer()
-        }
-
   def parse_file_stream!(spec_file_path, %Run{} = run) do
     state =
       spec_file_path
