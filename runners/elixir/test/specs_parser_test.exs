@@ -67,10 +67,52 @@ defmodule SpecsRunner.SpecsParserTest do
       assert run.specs[spec_file_path].errors == ["Title not found in spec file"]
     end
 
-    test "spec error when title is repeated"
-    test "spec error when acceptance criteria section is missing"
-    test "spec error when acceptance criteria section is empty"
-    test "spec error when scenario is empty"
-    test "spec error when scenario is repeated"
+    test "spec error when there is more than one h1 (# Title)", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "repeated_title.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Title is repeated"]
+    end
+
+    test "spec error when acceptance criteria section is missing", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "missing_acceptance_criteria.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Acceptance criteria section not found"]
+    end
+
+    test "spec error when acceptance criteria section is empty", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "empty_acceptance_criteria.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Acceptance criteria section is empty"]
+    end
+
+    test "spec error when acceptance criteria section is repeated", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "repeated_acceptance_criteria.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Acceptance criteria section is repeated"]
+    end
+
+    test "spec error when scenario is empty", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "empty_scenario.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Scenario is empty: Success"]
+    end
+
+    test "spec error when scenario is repeated", %{run: run} do
+      spec_file_path = Path.join(@specs_dir, "repeated_scenario.md")
+
+      run = SpecsParser.parse_file_stream!(spec_file_path, run)
+
+      assert run.specs[spec_file_path].errors == ["Scenario is repeated: Success"]
+    end
   end
 end
