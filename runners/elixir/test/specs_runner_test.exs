@@ -11,8 +11,9 @@ defmodule SpecsRunnerTest do
 
       assert result.specs_dir == @specs_dir
       assert result.tests_dir == @tests_dir
-      assert is_struct(result.start_time, DateTime)
-      assert is_struct(result.end_time, DateTime)
+
+      assert DateTime.compare(result.start_time, result.end_time) in [:lt, :eq]
+
       assert is_map(result.tests)
     end
 

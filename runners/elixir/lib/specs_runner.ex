@@ -13,10 +13,10 @@ defmodule SpecsRunner do
         specs_dir
         |> Path.join("**/*.md")
         |> Path.wildcard()
-        |> Stream.map(&SpecsParser.parse_file_stream!(&1, run))
+        |> Enum.reduce(run, &SpecsParser.parse_file_stream!/2)
+        |> Map.put(:end_time, DateTime.utc_now())
 
       {:ok, run}
-      # {:ok, %{run | end_time: DateTime.utc_now()}}
     end
   end
 
