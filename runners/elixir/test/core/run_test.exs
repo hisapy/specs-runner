@@ -84,6 +84,7 @@ defmodule SpecsRunner.Core.RunTest do
       spec_file_path = "spec_a.md"
       error_msg = "Error message"
 
+      run = Run.add_spec(run, spec_file_path)
       run = Run.add_error(run, spec_file_path, error_msg)
 
       assert run.specs[spec_file_path].errors == [error_msg]
