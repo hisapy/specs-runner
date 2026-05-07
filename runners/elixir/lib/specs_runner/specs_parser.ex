@@ -1,21 +1,21 @@
 defmodule SpecsRunner.SpecsParser do
   @moduledoc false
 
-  alias SpecsRunner.Core.Run
+  alias SpecsRunner.Core.RunInfo
 
-  def parse_file_stream!(spec_file_path, %Run{} = run) do
+  def parse_file_stream!(spec_file_path, %RunInfo{} = run_info) do
     state =
       spec_file_path
-      |> init_state(run)
+      |> init_state(run_info)
       |> parse_file_lines()
       |> finalize_validation()
 
-    state.run
+    state.run_info
   end
 
-  defp init_state(spec_file_path, run) do
+  defp init_state(spec_file_path, run_info) do
     %{
-      run: Run.add_spec(run, spec_file_path),
+      run_info: RunInfo.add_spec(run_info, spec_file_path),
       spec_file_path: spec_file_path,
       in_acceptance_criteria?: false,
       acceptance_criteria_found?: false,
@@ -24,7 +24,7 @@ defmodule SpecsRunner.SpecsParser do
       current_scenario_has_tests?: false,
       has_any_scenarios?: false,
       scenario_titles: MapSet.new(),
-      title_count: 0
+      title_found?: false
     }
   end
 
@@ -49,13 +49,13 @@ defmodule SpecsRunner.SpecsParser do
 
   defp handle_line({:title, title}, state) do
     next_state =
-      if state.title_count > 0 do
+      if state.title_found? do
         add_error(state, "Title is repeated")
       else
-        %{state | run: Run.set_spec_title(state.run, state.spec_file_path, title)}
+        %{state | run_info: RunInfo.set_spec_title(state.run_info, state.spec_file_path, title)}
       end
 
-    %{next_state | title_count: state.title_count + 1}
+    %{next_state | title_found?: true}
   end
 
   defp handle_line(:acceptance_criteria, state) do
@@ -108,7 +108,7 @@ defmodule SpecsRunner.SpecsParser do
 
     %{
       state
-      | run: Run.add_test(state.run, test_key),
+      | run_info: RunInfo.add_test(state.run_info, test_key),
         has_criteria_tests?: true,
         current_scenario_has_tests?: true
     }
@@ -124,7 +124,7 @@ defmodule SpecsRunner.SpecsParser do
     |> validate_acceptance_criteria()
   end
 
-  defp validate_title_presence(%{title_count: 0} = state),
+  defp validate_title_presence(%{title_found?: false} = state),
     do: add_error(state, "Title not found in spec file")
 
   defp validate_title_presence(state), do: state
@@ -151,6 +151,6 @@ defmodule SpecsRunner.SpecsParser do
   defp validate_current_scenario_before_transition(state), do: state
 
   defp add_error(state, error_msg) do
-    %{state | run: Run.add_error(state.run, state.spec_file_path, error_msg)}
+    %{state | run_info: RunInfo.add_error(state.run_info, state.spec_file_path, error_msg)}
   end
 end

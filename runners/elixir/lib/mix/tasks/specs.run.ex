@@ -42,13 +42,12 @@ defmodule Mix.Tasks.Specs.Run do
     {opts, _argv} = OptionParser.parse!(args, strict: @options)
     default_opts = Application.get_all_env(:specs_runner)
 
-    options = Keyword.merge(default_opts, opts)
-
-    specs_dir = req_non_empty_str!(options, :specs_dir)
-    tests_dir = req_non_empty_str!(options, :tests_dir)
+    specs_dir = require_non_empty_str!(opts, :specs_dir, default_opts)
+    tests_dir = require_non_empty_str!(opts, :tests_dir, default_opts)
 
     case SpecsRunner.run(specs_dir, tests_dir) do
-      {:ok, _result} ->
+      {:ok, run_info} ->
+        report_pending_specs(run_info)
         :ok
 
       {:error, reason} ->
@@ -56,25 +55,32 @@ defmodule Mix.Tasks.Specs.Run do
     end
   end
 
-  # defp format_summary(%SpecsRunner.Result{} = result) do
-  #   [
-  #     "Summary",
-  #     "Total: #{result.total}",
-  #     "Pending: #{result.pending}",
-  #     "Passed: #{result.passed}",
-  #     "Failed: #{result.failed}"
-  #   ]
-  #   |> Enum.join("\n")
-  # end
+  defp report_pending_specs(run_info) do
+    run_info.specs
+    |> Enum.filter(fn {_path, spec} -> spec.status == :pending end)
+    |> Enum.each(fn {spec_path, spec} ->
+      test_file = spec_path_to_test_file(spec_path, run_info.tests_dir)
 
-  defp req_non_empty_str!(opts, key) do
-    with {:ok, value} <- Keyword.fetch(opts, key),
-         true <- is_binary(value) and String.trim(value) != "" do
+      if not File.exists?(test_file) do
+        Mix.shell().info(
+          "[pending] #{spec.title} (missing test file: #{Path.basename(test_file)})"
+        )
+      end
+    end)
+  end
+
+  defp spec_path_to_test_file(spec_path, tests_dir) do
+    base = spec_path |> Path.basename(".md")
+    Path.join(tests_dir, "#{base}_test.exs")
+  end
+
+  defp require_non_empty_str!(opts, key, default_opts) do
+    value = Keyword.get(opts, key, Keyword.get(default_opts, key))
+
+    if is_binary(value) and String.trim(value) != "" do
       value
     else
-      _ ->
-        value = Keyword.get(opts, key)
-        raise ArgumentError, "#{key} must be a non-empty string, got: #{inspect(value)}"
+      raise ArgumentError, "#{key} must be a non-empty string, got: #{inspect(value)}"
     end
   end
 end
