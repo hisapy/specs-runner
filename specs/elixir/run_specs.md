@@ -85,7 +85,10 @@ Pending specs (pre-run):
 
 - specs/orders/refund_flow.md
 	reason: missing test file
-	expected: test/specs/orders/refund_flow_test.exs
+	expected: orders/refund_flow_test.exs
+
+When rendering spec and test file paths in output, paths are displayed relative to
+the configured `specs_dir` and `tests_dir`.
 
 Running ExUnit with matched tests...
 

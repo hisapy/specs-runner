@@ -2,6 +2,7 @@ defmodule SpecsRunner.Core.Test do
   @moduledoc false
 
   defstruct name: nil,
+            scenario_name: nil,
             status: :pending,
             errors: nil
 
@@ -9,6 +10,7 @@ defmodule SpecsRunner.Core.Test do
 
   @type t :: %__MODULE__{
           name: String.t() | nil,
+          scenario_name: String.t() | nil,
           status: status(),
           errors: term() | nil
         }

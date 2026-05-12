@@ -1,21 +1,21 @@
 defmodule SpecsRunner.SpecsParser do
   @moduledoc false
 
-  alias SpecsRunner.Core.RunInfo
+  alias SpecsRunner.Core.{Spec, Test}
 
-  def parse_file_stream!(spec_file_path, %RunInfo{} = run_info) do
+  def parse_file_stream!(spec_file_path) do
     state =
       spec_file_path
-      |> init_state(run_info)
+      |> init_state()
       |> parse_file_lines()
       |> finalize_validation()
 
-    state.run_info
+    state.spec
   end
 
-  defp init_state(spec_file_path, run_info) do
+  defp init_state(spec_file_path) do
     %{
-      run_info: RunInfo.add_spec(run_info, spec_file_path),
+      spec: %Spec{path: spec_file_path},
       spec_file_path: spec_file_path,
       in_acceptance_criteria?: false,
       acceptance_criteria_found?: false,
@@ -52,7 +52,8 @@ defmodule SpecsRunner.SpecsParser do
       if state.title_found? do
         add_error(state, "Title is repeated")
       else
-        %{state | run_info: RunInfo.set_spec_title(state.run_info, state.spec_file_path, title)}
+        spec = %{state.spec | title: title}
+        %{state | spec: spec}
       end
 
     %{next_state | title_found?: true}
@@ -104,11 +105,18 @@ defmodule SpecsRunner.SpecsParser do
   defp handle_line({:scenario, _scenario_title}, state), do: state
 
   defp handle_line({:list_item, test_name}, %{in_acceptance_criteria?: true} = state) do
-    test_key = {state.spec_file_path, state.current_scenario, test_name}
+    test = %Test{name: test_name, scenario_name: state.current_scenario}
+
+    spec =
+      try do
+        Spec.add_test!(state.spec, test)
+      rescue
+        ArgumentError -> add_error(state, "duplicate test in spec").spec
+      end
 
     %{
       state
-      | run_info: RunInfo.add_test(state.run_info, test_key),
+      | spec: spec,
         has_criteria_tests?: true,
         current_scenario_has_tests?: true
     }
@@ -151,6 +159,9 @@ defmodule SpecsRunner.SpecsParser do
   defp validate_current_scenario_before_transition(state), do: state
 
   defp add_error(state, error_msg) do
-    %{state | run_info: RunInfo.add_error(state.run_info, state.spec_file_path, error_msg)}
+    spec = state.spec
+    new_errors = spec.errors ++ [error_msg]
+    spec = %{spec | errors: new_errors, status: :failed}
+    %{state | spec: spec}
   end
 end

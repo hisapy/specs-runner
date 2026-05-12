@@ -2,7 +2,7 @@ defmodule SpecsRunner.Core.RunInfoTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias SpecsRunner.Core.{RunInfo, Spec, Test}
+  alias SpecsRunner.Core.{RunInfo, Spec}
 
   setup do
     run_info = RunInfo.new("specs", "tests/specs")
@@ -10,86 +10,24 @@ defmodule SpecsRunner.Core.RunInfoTest do
   end
 
   describe "add_spec/2" do
-    test "adds a spec with spec_file_path as key", %{run_info: run_info} do
-      spec_file_path = "spec_a.md"
+    test "adds a spec keyed by spec.path", %{run_info: run_info} do
+      spec = %Spec{path: "spec_a.md", title: "Spec A"}
 
-      run_info = RunInfo.add_spec(run_info, spec_file_path)
+      run_info = RunInfo.add_spec(run_info, spec)
 
-      assert run_info.specs[spec_file_path] == Spec.new(spec_file_path)
+      assert run_info.specs[spec.path] == spec
     end
-  end
 
-  describe "set_spec_title/3" do
-    test "sets the title for the spec at spec_file_path", %{run_info: run_info} do
-      spec_file_path = "spec_a.md"
-      spec_title = "Spec A"
+    test "raises when a spec with the same path already exists", %{run_info: run_info} do
+      spec_path = "spec_a.md"
+      first_spec = %Spec{path: spec_path, title: "First"}
+      second_spec = %Spec{path: spec_path, title: "Second"}
 
-      run_info = RunInfo.add_spec(run_info, spec_file_path)
-      run_info = RunInfo.set_spec_title(run_info, spec_file_path, spec_title)
+      run_info = RunInfo.add_spec(run_info, first_spec)
 
-      assert run_info.specs[spec_file_path].title == spec_title
-    end
-  end
-
-  describe "add_test/2" do
-    test "returns the run_info with the test added to it", %{run_info: run_info} do
-      spec_file_path = "spec_a.md"
-      scenario_title = "Scenario A"
-      test_name = "something works"
-      test_key = {spec_file_path, scenario_title, test_name}
-
-      run_info = RunInfo.add_test(run_info, test_key)
-
-      assert run_info.tests == %{
-               test_key => %Test{
-                 status: :pending,
-                 errors: nil
-               }
-             }
-    end
-  end
-
-  describe "set_test_passed/2" do
-    test "returns the run_info with the test marked as passed", %{run_info: run_info} do
-      spec_file_path = "spec_a.md"
-      scenario_title = "Scenario A"
-      test_name = "something works"
-      test_key = {spec_file_path, scenario_title, test_name}
-
-      run_info = RunInfo.add_test(run_info, test_key)
-      run_info = RunInfo.set_test_passed(run_info, test_key)
-
-      assert run_info.tests[test_key].status == :passed
-    end
-  end
-
-  describe "set_test_failed/3" do
-    test "returns the run_info with the test marked as failed and errors set", %{
-      run_info: run_info
-    } do
-      spec_file_path = "spec_a.md"
-      scenario_title = "Scenario A"
-      test_name = "something works"
-      test_key = {spec_file_path, scenario_title, test_name}
-      errors = ["Error message"]
-
-      run_info = RunInfo.add_test(run_info, test_key)
-      run_info = RunInfo.set_test_failed(run_info, test_key, errors)
-
-      assert run_info.tests[test_key].status == :failed
-      assert run_info.tests[test_key].errors == errors
-    end
-  end
-
-  describe "add_error/3" do
-    test "returns the run_info with the spec errors updated", %{run_info: run_info} do
-      spec_file_path = "spec_a.md"
-      error_msg = "Error message"
-
-      run_info = RunInfo.add_spec(run_info, spec_file_path)
-      run_info = RunInfo.add_error(run_info, spec_file_path, error_msg)
-
-      assert run_info.specs[spec_file_path].errors == [error_msg]
+      assert_raise ArgumentError, ~r/duplicate spec path: spec_a\.md/, fn ->
+        RunInfo.add_spec(run_info, second_spec)
+      end
     end
   end
 end

@@ -2,19 +2,24 @@ defmodule SpecsRunnerTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureIO
+
   @specs_dir Application.compile_env(:specs_runner, :specs_dir)
   @tests_dir Application.compile_env(:specs_runner, :tests_dir)
 
   describe "run(specs_dir, tests_dir)" do
     test "returns {:ok, result} when completed successfully" do
-      {:ok, result} = SpecsRunner.run(@specs_dir, @tests_dir)
+      {{:ok, result}, _output} =
+        with_io(fn ->
+          SpecsRunner.run(@specs_dir, @tests_dir)
+        end)
 
       assert result.specs_dir == @specs_dir
       assert result.tests_dir == @tests_dir
 
       assert DateTime.compare(result.start_time, result.end_time) in [:lt, :eq]
 
-      assert is_map(result.tests)
+      assert is_map(result.specs)
     end
 
     test "returns {:error, reason} when the specs_dir is not found" do

@@ -74,6 +74,8 @@ defmodule SpecsRunner.Specs.RunTest do
   #   parameters: %{}
   # }
 
+  @pending_missing_test_file_excerpt "No test file for pending.md, expected: pending_test.exs"
+
   describe "Missing test file" do
     test "reports the spec as pending" do
       output =
@@ -82,7 +84,7 @@ defmodule SpecsRunner.Specs.RunTest do
           Mix.Task.run("specs.run", [])
         end)
 
-      assert output =~ ~r/\[pending\]\s+Pending Spec/
+      assert output =~ @pending_missing_test_file_excerpt
     end
 
     test "shows the name of the missing test file" do
