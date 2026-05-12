@@ -31,9 +31,11 @@ defmodule SpecsRunner.Output do
   def spec_errors(spec, run_info) do
     spec_path = relative_display_path(spec.path, run_info.specs_dir)
 
-    Enum.each(spec.errors, fn err ->
-      error("#{err} (#{spec_path})")
-    end)
+    header =
+      if spec.title, do: "#{spec_path} (#{spec.title})", else: spec_path
+
+    lines = Enum.map(spec.errors, &"  - #{&1}")
+    error(Enum.join([header | lines], "\n"))
   end
 
   # Mirrors CLIFormatter failure-style output: red text when ANSI is enabled.
