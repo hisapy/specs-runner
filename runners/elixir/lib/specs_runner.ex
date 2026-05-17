@@ -1,8 +1,10 @@
 defmodule SpecsRunner do
   @moduledoc false
 
+  require Logger
   alias SpecsRunner.Core.RunInfo
   alias SpecsRunner.Output
+  alias SpecsRunner.SpecsFile
   alias SpecsRunner.SpecsParser
 
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
@@ -10,6 +12,16 @@ defmodule SpecsRunner do
          :ok <- validate_dir(tests_dir) do
       run_info = RunInfo.new(specs_dir, tests_dir)
       Output.run_started(run_info)
+
+      exunit_already_running? = exunit_running?()
+
+      unless exunit_already_running? do
+        ExUnit.start(
+          autorun: false,
+          formatters: [Reporter.ExUnitAdapter],
+          run_info: run_info
+        )
+      end
 
       run_info =
         specs_dir
@@ -21,13 +33,9 @@ defmodule SpecsRunner do
         )
         |> Enum.reduce(run_info, &process_parsed_spec/2)
 
-      # ExUnit.start(
-      #   autorun: false,
-      #   formatters: [Reporter.ExUnitAdapter],
-      #   run_info: run_info
-      # )
-
-      # ExUnit.run()
+      unless exunit_already_running? do
+        ExUnit.run()
+      end
 
       {:ok, %{run_info | end_time: DateTime.utc_now()}}
     end
@@ -38,13 +46,9 @@ defmodule SpecsRunner do
   end
 
   defp process_parsed_spec({:ok, %{errors: errors} = spec}, run_info) when errors == [] do
-    test_file =
-      Path.join(
-        run_info.tests_dir,
-        Path.basename(spec.path, ".md") <> "_test.exs"
-      )
+    test_file = SpecsFile.test_file_path(spec.path, run_info.specs_dir, run_info.tests_dir)
 
-    if File.exists?(test_file) do
+    if SpecsFile.exists?(test_file) do
       # what happens if the required file has a syntax error?
       Code.require_file(test_file)
       RunInfo.add_spec(run_info, %{spec | test_file: test_file})
@@ -65,5 +69,9 @@ defmodule SpecsRunner do
     )
 
     run_info
+  end
+
+  defp exunit_running? do
+    Process.whereis(ExUnit.Server) != nil
   end
 end

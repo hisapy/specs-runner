@@ -111,7 +111,14 @@ defmodule SpecsRunner.SpecsParser do
       try do
         Spec.add_test!(state.spec, test)
       rescue
-        ArgumentError -> add_error(state, "duplicate test in spec").spec
+        ArgumentError ->
+          err_msg = "Test is repeated: #{test_name}"
+
+          err_msg =
+            if state.current_scenario,
+              do: err_msg <> " - Scenario: #{state.current_scenario}"
+
+          add_error(state, err_msg).spec
       end
 
     %{

@@ -112,7 +112,10 @@ defmodule SpecsRunner.SpecsParserTest do
 
       spec = SpecsParser.parse_file_stream!(spec_file_path)
 
-      assert spec.errors == ["Scenario is repeated: Success", "duplicate test in spec"]
+      assert spec.errors == [
+               "Scenario is repeated: Success",
+               "Test is repeated: Can be parsed - Scenario: Success"
+             ]
     end
   end
 end

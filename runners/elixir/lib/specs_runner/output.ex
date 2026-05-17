@@ -1,6 +1,8 @@
 defmodule SpecsRunner.Output do
   @moduledoc false
 
+  alias SpecsRunner.SpecsFile
+
   @default_colors [
     failure: :red,
     warning: :yellow,
@@ -20,19 +22,22 @@ defmodule SpecsRunner.Output do
 
     expected_test_file =
       spec.path
-      |> Path.basename(".md")
-      |> then(&"#{&1}_test.exs")
-      |> then(&Path.join(run_info.tests_dir, &1))
+      |> SpecsFile.test_file_path(run_info.specs_dir, run_info.tests_dir)
       |> relative_display_path(run_info.tests_dir)
 
-    IO.puts(colorize(:warning, "No test file for #{spec_path}, expected: #{expected_test_file}"))
+    IO.puts(
+      colorize(
+        :warning,
+        "[Warn] No test file for #{spec_path}, expected: #{expected_test_file}"
+      )
+    )
   end
 
   def spec_errors(spec, run_info) do
     spec_path = relative_display_path(spec.path, run_info.specs_dir)
 
     header =
-      if spec.title, do: "#{spec_path} (#{spec.title})", else: spec_path
+      if spec.title, do: "[Error] #{spec_path} (#{spec.title})", else: "[Error] #{spec_path}"
 
     lines = Enum.map(spec.errors, &"  - #{&1}")
     error(Enum.join([header | lines], "\n"))
