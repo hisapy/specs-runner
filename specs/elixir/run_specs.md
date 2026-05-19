@@ -34,7 +34,7 @@ The main components are:
 
 - the specs parser used to parse streams of spec files
 - `ExUnit` which runs the tests matching specs
-- the reporter (formatter) used to print results to stdout
+- the output formatter used to print results to stdout
 
 The formatter handle events emitted by the spec parser and ExUnit.
 
@@ -47,15 +47,7 @@ Given valid specs dir and tests dir, from a high-level perspective, `mix specs.r
 - runs tests with ExUnit
 - prints specs and tests output
 
-From an event-driven perspective, events are emitted when:
-
-- the specs runner is started
-- a .md file in the specs dir is added to the run
-- an error is detected parsing a specs file
-- a specs file parsing is finished
-- ExUnit finishes a test (actually ExUnit emits more events but this is the one we care about)
-
-The reporter (a `GenServer` like `ExUnit.CLIFormatter`) handles the events and prints a message accordingly.
+The `:test_finished` event is emitted when ExUnit finishes a test (actually ExUnit emits more events but this is the one we care about). A `GenServer` like `ExUnit.CLIFormatter` handles the events and uses the output formatter to print the test state, like `ExUnit` does, but starting the output with the specs file path and title in case of failures.
 
 An specs file is matched to a test file only if it's done parsing without errors.
 
