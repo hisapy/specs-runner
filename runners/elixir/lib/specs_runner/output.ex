@@ -27,12 +27,19 @@ defmodule SpecsRunner.Output do
     end
 
     @impl GenServer
+    def handle_cast({:suite_finished, _times_us}, state) do
+      IO.puts("")
+      {:noreply, state}
+    end
+
+    @impl GenServer
     def handle_cast(_event, state) do
       {:noreply, state}
     end
   end
 
   @default_colors [
+    success: :green,
     failure: :red,
     warning: :yellow,
     location_info: [:bright, :black]
@@ -67,7 +74,10 @@ defmodule SpecsRunner.Output do
 
   def test_finished(%ExUnit.Test{}, nil), do: :ok
 
-  def test_finished(%ExUnit.Test{state: nil}, _run_info), do: :ok
+  def test_finished(%ExUnit.Test{state: nil}, _run_info) do
+    IO.write(colorize(:success, "."))
+    :ok
+  end
 
   def test_finished(%ExUnit.Test{state: {:failed, failures}} = test, run_info) do
     with test_file_path when is_binary(test_file_path) <- test_file_path_from_test(test, run_info),

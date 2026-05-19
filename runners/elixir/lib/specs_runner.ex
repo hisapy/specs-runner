@@ -26,6 +26,7 @@ defmodule SpecsRunner do
         )
         |> Enum.reduce(run_info, &process_parsed_spec/2)
 
+      # Avoid infinite loop if ExUnit was already running before SpecsRunner.run/2 was called
       unless exunit_was_already_running? do
         ExUnit.start(
           autorun: false,

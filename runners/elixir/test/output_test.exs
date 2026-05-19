@@ -25,6 +25,33 @@ defmodule SpecsRunner.OutputTest do
   end
 
   describe "test_finished" do
+    test "prints a green dot with a successful test" do
+      test = %ExUnit.Test{
+        name: :"test reports the spec as pending",
+        module: SpecsRunner.Specs.RunTest,
+        parameters: %{},
+        state: nil,
+        tags: %{file: ~c"test/specs/elixir/run_specs_test.exs"}
+      }
+
+      output =
+        ExUnit.CaptureIO.capture_io(fn ->
+          SpecsRunner.Output.test_finished(test, RunInfo.new("specs", "test/specs"))
+        end)
+
+      expected =
+        [:green, ".", :reset]
+        |> IO.ANSI.format_fragment(true)
+        |> IO.iodata_to_binary()
+
+      assert output == expected
+    end
+
+    @tag :skip
+    test "prints ExUnit-style failure details with the spec header" do
+      :ok
+    end
+
     test "prints the matching spec title and failure details for failed tests" do
       spec = %Spec{
         Spec.new("specs/elixir/run_specs.md", "Run Specs")
