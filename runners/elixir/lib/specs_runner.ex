@@ -8,7 +8,7 @@ defmodule SpecsRunner do
   alias SpecsRunner.SpecsParser
 
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
-    exunit_already_running? = exunit_running?()
+    exunit_was_already_running? = Process.whereis(ExUnit.Server) != nil
 
     with :ok <- validate_dir(specs_dir),
          :ok <- validate_dir(tests_dir),
@@ -26,7 +26,7 @@ defmodule SpecsRunner do
         )
         |> Enum.reduce(run_info, &process_parsed_spec/2)
 
-      unless exunit_already_running? do
+      unless exunit_was_already_running? do
         ExUnit.start(
           autorun: false,
           formatters: [Output.ExUnitFormatter],
@@ -69,10 +69,6 @@ defmodule SpecsRunner do
     )
 
     run_info
-  end
-
-  defp exunit_running? do
-    Process.whereis(ExUnit.Server) != nil
   end
 
   defp ensure_ex_unit_started do
