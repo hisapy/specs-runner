@@ -42,7 +42,7 @@ This repository defines a framework for Markdown-based executable specifications
 
 ## Ok implement
 
-- Use this flow when the user reply is exactly "ok implement".
+- Use this flow when the user reply is exactly "ok implement" or when asking to turn to "ok immplement" mode.
 - Treat prior planning/discussion in the thread as approved implementation scope.
 - Apply the agreed changes without re-explaining the planned edits.
 - Run all required validation command(s) for affected ecosystems.
