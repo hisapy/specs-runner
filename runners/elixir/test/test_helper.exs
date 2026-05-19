@@ -1,1 +1,1 @@
-ExUnit.start(formatters: [ExUnit.CLIFormatter, SpecsRunner.OutputFormatter])
+ExUnit.start(formatters: [ExUnit.CLIFormatter, SpecsRunner.Output.ExUnitFormatter])

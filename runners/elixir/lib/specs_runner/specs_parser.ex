@@ -2,20 +2,34 @@ defmodule SpecsRunner.SpecsParser do
   @moduledoc false
 
   alias SpecsRunner.Core.{Spec, Test}
+  alias SpecsRunner.SpecsFile
 
-  def parse_file_stream!(spec_file_path) do
+  def parse_file_stream!(spec_file_path, specs_dir, tests_dir) do
     state =
       spec_file_path
-      |> init_state()
+      |> init_state(specs_dir, tests_dir)
       |> parse_file_lines()
       |> finalize_validation()
 
     state.spec
   end
 
-  defp init_state(spec_file_path) do
+  def relative_path(nil, _base_dir), do: nil
+
+  def relative_path(path, base_dir) do
+    path
+    |> normalize_path()
+    |> Path.relative_to(normalize_path(base_dir))
+  end
+
+  defp init_state(spec_file_path, specs_dir, tests_dir) do
+    test_file_path =
+      spec_file_path
+      |> SpecsFile.test_file_path(specs_dir, tests_dir)
+      |> relative_path(tests_dir)
+
     %{
-      spec: %Spec{path: spec_file_path},
+      spec: %Spec{path: relative_path(spec_file_path, specs_dir), test_file_path: test_file_path},
       spec_file_path: spec_file_path,
       in_acceptance_criteria?: false,
       acceptance_criteria_found?: false,
@@ -171,4 +185,7 @@ defmodule SpecsRunner.SpecsParser do
     spec = %{spec | errors: new_errors, status: :failed}
     %{state | spec: spec}
   end
+
+  defp normalize_path(path) when is_list(path), do: path |> List.to_string() |> Path.expand()
+  defp normalize_path(path) when is_binary(path), do: Path.expand(path)
 end

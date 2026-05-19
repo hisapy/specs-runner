@@ -5,7 +5,7 @@ defmodule SpecsRunner.Core.Spec do
 
   defstruct title: nil,
             path: nil,
-            test_file: nil,
+            test_file_path: nil,
             status: :pending,
             errors: [],
             tests: %{}
@@ -15,7 +15,7 @@ defmodule SpecsRunner.Core.Spec do
   @type t :: %__MODULE__{
           title: String.t(),
           path: String.t(),
-          test_file: String.t(),
+          test_file_path: String.t(),
           status: status(),
           errors: list(),
           tests: map()
