@@ -45,6 +45,12 @@ defmodule Mix.Tasks.Specs.Run do
     specs_dir = require_non_empty_str!(opts, :specs_dir, default_opts)
     tests_dir = require_non_empty_str!(opts, :tests_dir, default_opts)
 
+    Mix.shell().info([
+      "SpecsRunner is running\n",
+      "Specs directory: #{specs_dir}\n",
+      "Tests directory: #{tests_dir}\n"
+    ])
+
     case SpecsRunner.run(specs_dir, tests_dir) do
       {:ok, _run_info} ->
         # maybe call formatter/reporter to print summary here

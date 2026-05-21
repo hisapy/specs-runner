@@ -3,7 +3,7 @@ defmodule SpecsRunner do
 
   require Logger
   alias SpecsRunner.Core.RunInfo
-  alias SpecsRunner.Output
+  alias SpecsRunner.ExUnitCLIFormatter
   alias SpecsRunner.SpecsFile
   alias SpecsRunner.SpecsParser
 
@@ -14,7 +14,6 @@ defmodule SpecsRunner do
          :ok <- validate_dir(tests_dir),
          :ok <- ensure_ex_unit_started() do
       run_info = RunInfo.new(specs_dir, tests_dir)
-      Output.run_started(run_info)
 
       run_info =
         specs_dir
@@ -30,7 +29,7 @@ defmodule SpecsRunner do
       unless exunit_was_already_running? do
         ExUnit.start(
           autorun: false,
-          formatters: [Output.ExUnitFormatter],
+          formatters: [ExUnitCLIFormatter],
           run_info: run_info
         )
 
@@ -45,7 +44,7 @@ defmodule SpecsRunner do
     if File.dir?(path), do: :ok, else: {:error, "#{path}: Directory not found"}
   end
 
-  defp process_parsed_spec({:ok, %{errors: errors} = spec}, run_info) when errors == [] do
+  defp process_parsed_spec({:ok, spec}, run_info) when spec.errors == [] do
     test_file = Path.join(run_info.tests_dir, spec.test_file_path)
 
     if SpecsFile.exists?(test_file) do
@@ -54,19 +53,36 @@ defmodule SpecsRunner do
 
       RunInfo.add_spec(run_info, spec)
     else
-      Output.missing_test_file(spec)
+      IO.puts(
+        ExUnitCLIFormatter.colorize(
+          :invalid,
+          "[Warn] No test file for #{spec.path}, expected: #{spec.test_file_path}"
+        )
+      )
+
       run_info
     end
   end
 
   defp process_parsed_spec({:ok, spec}, run_info) do
-    Output.spec_errors(spec)
+    spec_path = spec.path
+
+    header =
+      if spec.title, do: "[Error] #{spec_path} (#{spec.title})", else: "[Error] #{spec_path}"
+
+    lines = Enum.map(spec.errors, &"  - #{&1}")
+
+    IO.puts(ExUnitCLIFormatter.colorize(:failure, Enum.join([header | lines], "\n")))
+
     run_info
   end
 
   defp process_parsed_spec({:exit, {spec_file_path, reason}}, run_info) do
-    Output.error(
-      "Process exited unexpectedly parsing #{spec_file_path} with reason:\n#{inspect(reason)}"
+    IO.puts(
+      ExUnitCLIFormatter.colorize(
+        :failure,
+        "Process exited unexpectedly parsing #{spec_file_path} with reason:\n#{inspect(reason)}"
+      )
     )
 
     run_info
