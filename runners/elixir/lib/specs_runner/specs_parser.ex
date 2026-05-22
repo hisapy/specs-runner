@@ -14,14 +14,6 @@ defmodule SpecsRunner.SpecsParser do
     state.spec
   end
 
-  def relative_path(nil, _base_dir), do: nil
-
-  def relative_path(path, base_dir) do
-    path
-    |> normalize_path()
-    |> Path.relative_to(normalize_path(base_dir))
-  end
-
   defp init_state(spec_file_path, specs_dir, tests_dir) do
     test_file_path =
       spec_file_path
@@ -41,6 +33,15 @@ defmodule SpecsRunner.SpecsParser do
       title_found?: false
     }
   end
+
+  def relative_path(path, base_dir) do
+    path
+    |> normalize_path()
+    |> Path.relative_to(normalize_path(base_dir))
+  end
+
+  defp normalize_path(path) when is_list(path), do: path |> List.to_string() |> Path.expand()
+  defp normalize_path(path) when is_binary(path), do: Path.expand(path)
 
   defp parse_file_lines(%{spec_file_path: spec_file_path} = state) do
     spec_file_path
@@ -185,7 +186,4 @@ defmodule SpecsRunner.SpecsParser do
     spec = %{spec | errors: new_errors, status: :failed}
     %{state | spec: spec}
   end
-
-  defp normalize_path(path) when is_list(path), do: path |> List.to_string() |> Path.expand()
-  defp normalize_path(path) when is_binary(path), do: Path.expand(path)
 end

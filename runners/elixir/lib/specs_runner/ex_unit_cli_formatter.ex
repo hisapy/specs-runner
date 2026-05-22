@@ -4,35 +4,43 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   """
   use GenServer
 
+  alias SpecsRunner.Core.RunInfo
+  alias SpecsRunner.SpecsParser
+
   import ExUnit.Formatter,
     only: [format_times: 1, format_filters: 2, format_test_failure: 5, format_test_all_failure: 5]
 
   ## Callbacks
 
   def init(opts) do
+    repeat_until_failure = Keyword.get(opts, :repeat_until_failure, 0)
+
     remaining =
-      if opts[:repeat_until_failure] > 0 do
-        ", remaining_runs: #{opts[:remaining_runs]}"
+      if repeat_until_failure > 0 do
+        ", remaining_runs: #{Keyword.get(opts, :remaining_runs)}"
       else
         ""
       end
 
-    IO.puts([
-      "Running ExUnit with seed: #{opts[:seed]}, max_cases: #{opts[:max_cases]}",
-      remaining
-    ])
+    if opts[:seed] || opts[:max_cases] do
+      IO.puts([
+        "Running ExUnit with seed: #{opts[:seed]}, max_cases: #{opts[:max_cases]}",
+        remaining
+      ])
 
-    print_filters(opts, :exclude)
-    print_filters(opts, :include)
-    IO.puts("")
+      print_filters(opts, :exclude)
+      print_filters(opts, :include)
+      IO.puts("")
+    end
 
     config = %{
-      dry_run: opts[:dry_run],
-      trace: opts[:trace],
+      run_info: Keyword.get(opts, :run_info),
+      dry_run: Keyword.get(opts, :dry_run, false),
+      trace: Keyword.get(opts, :trace, false),
       colors: colors(opts),
       width: get_terminal_width(),
-      slowest: opts[:slowest],
-      slowest_modules: opts[:slowest_modules],
+      slowest: Keyword.get(opts, :slowest, 0),
+      slowest_modules: Keyword.get(opts, :slowest_modules, 0),
       test_counter: %{},
       test_timings: [],
       failure_counter: 0,
@@ -85,7 +93,11 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
       IO.write(success(".", config))
     end
 
-    config = %{config | test_counter: update_test_counter(config.test_counter, test)}
+    config =
+      config
+      |> Map.put(:test_counter, update_test_counter(config.test_counter, test))
+      |> update_run_info(test, :passed)
+
     {:noreply, update_test_timings(config, test)}
   end
 
@@ -232,6 +244,40 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
   def handle_cast(_, config) do
     {:noreply, config}
+  end
+
+  defp update_run_info(%{run_info: %RunInfo{} = run_info} = config, %ExUnit.Test{} = test, status) do
+    test_file_path =
+      test.tags
+      |> Map.fetch!(:file)
+      |> SpecsParser.relative_path(run_info.tests_dir)
+
+    test_name =
+      test.name
+      |> to_string()
+      |> String.replace_prefix("test ", "")
+
+    scenario =
+      test.tags
+      |> Map.get(:describe)
+      |> to_string()
+
+    try do
+      run_info =
+        update_in(
+          run_info.specs[test_file_path].tests[{scenario, test_name}],
+          &%{&1 | status: status}
+        )
+
+      %{config | run_info: run_info}
+    rescue
+      error ->
+        "[Error] #{Exception.message(error)}"
+        |> failure(config)
+        |> IO.puts()
+
+        config
+    end
   end
 
   ## Tracing
@@ -422,7 +468,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   defp if_true(value, true, fun), do: fun.(value)
 
   defp print_filters(opts, key) do
-    case opts[key] do
+    case Keyword.get(opts, key, []) do
       [] -> :ok
       filters -> IO.puts(format_filters(filters, key))
     end

@@ -37,7 +37,7 @@ defmodule SpecsRunner.Core.RunInfo do
     %{run_info | specs: Map.put(run_info.specs, test_file_path, spec)}
   end
 
-  def find_spec(%__MODULE__{} = run_info, test_file_path) when is_binary(test_file_path) do
-    Map.get(run_info.specs, test_file_path)
+  def fetch_spec!(%__MODULE__{} = run_info, test_file_path) when is_binary(test_file_path) do
+    Map.fetch!(run_info.specs, test_file_path)
   end
 end
