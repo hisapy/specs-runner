@@ -84,7 +84,7 @@ defmodule SpecsRunner.Specs.RunTest do
           Mix.Task.run("specs.run", [])
         end)
 
-      refute output =~ @pending_missing_test_file_excerpt
+      assert output =~ @pending_missing_test_file_excerpt
     end
 
     test "shows the name of the missing test file" do
