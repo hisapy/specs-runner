@@ -464,6 +464,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
   ## Printing
 
+  # credo:disable-for-lines:56 Credo.Check.Refactor.CyclomaticComplexity
   defp print_summary(config, force_failures?) do
     test_counter = collect_test_counter(config)
     passed_counter = test_counter - config.failure_counter
@@ -532,6 +533,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   end
 
   defp print_failure(formatted, config) do
+    # credo:disable-for-next-line Credo.Check.Refactor.CondStatements
     cond do
       config.trace -> IO.puts("")
       true -> IO.puts("\n")
@@ -546,6 +548,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     |> Enum.map(fn {test_type, count} ->
       "#{count} #{pluralize_type(count, test_type)}"
     end)
+    # credo:disable-for-next-line Credo.Check.Refactor.MapJoin
     |> Enum.join(", ")
   end
 
@@ -561,6 +564,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
         |> Enum.map_join(", ", fn type ->
           total = Map.fetch!(test_counter, type)
 
+          # credo:disable-for-next-line Credo.Check.Refactor.Nesting
           if all_passed? do
             "#{total} #{pluralize_type(total, type)}"
           else
@@ -587,6 +591,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   # Color styles
 
   def colorize(key, string, %{colors: colors} \\ %{colors: colors(colors: [])}) do
+    # credo:disable-for-next-line Credo.Check.Refactor.MatchInCondition
     if escape = colors[:enabled] && colors[key] do
       [escape, string, :reset]
       |> IO.ANSI.format_fragment(true)
