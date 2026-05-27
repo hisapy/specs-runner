@@ -14,8 +14,8 @@ defmodule SpecsRunnerTest do
           SpecsRunner.run(@specs_dir, @tests_dir)
         end)
 
-      assert result.specs_dir == @specs_dir
-      assert result.tests_dir == @tests_dir
+      assert result.specs_dir == Path.expand(@specs_dir)
+      assert result.tests_dir == Path.expand(@tests_dir)
 
       assert DateTime.compare(result.start_time, result.end_time) in [:lt, :eq]
 

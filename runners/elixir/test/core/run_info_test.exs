@@ -10,10 +10,10 @@ defmodule SpecsRunner.Core.RunInfoTest do
   end
 
   describe "add_spec/2" do
-    test "adds a spec keyed by test_file_path", %{run_info: run_info} do
+    test "adds a spec keyed by test_path", %{run_info: run_info} do
       spec = %Spec{
         path: "spec_a.md",
-        test_file_path: "spec_a_test.exs",
+        test_path: "spec_a_test.exs",
         title: "Spec A"
       }
 
@@ -22,17 +22,17 @@ defmodule SpecsRunner.Core.RunInfoTest do
       assert run_info.specs["spec_a_test.exs"] == spec
     end
 
-    test "raises when a spec with the same test_file_path already exists", %{run_info: run_info} do
+    test "raises when a spec with the same test_path already exists", %{run_info: run_info} do
       first_spec = %Spec{
         path: "spec_a.md",
-        test_file_path: "spec_a_test.exs",
+        test_path: "spec_a_test.exs",
         title: "First"
       }
 
       second_spec =
         %Spec{
           path: "spec_b.md",
-          test_file_path: "spec_a_test.exs",
+          test_path: "spec_a_test.exs",
           title: "Second"
         }
 
@@ -44,17 +44,17 @@ defmodule SpecsRunner.Core.RunInfoTest do
     end
   end
 
-  describe "find_spec/2" do
-    test "finds the spec by test_file_path", %{run_info: run_info} do
+  describe "fetch_spec!/2" do
+    test "finds the spec by test_path", %{run_info: run_info} do
       spec = %Spec{
         path: "spec_a.md",
-        test_file_path: "spec_a_test.exs",
+        test_path: "spec_a_test.exs",
         title: "Spec A"
       }
 
       run_info = RunInfo.add_spec(run_info, spec)
 
-      assert RunInfo.find_spec(run_info, "spec_a_test.exs") == spec
+      assert RunInfo.fetch_spec!(run_info, "spec_a_test.exs") == spec
     end
   end
 end

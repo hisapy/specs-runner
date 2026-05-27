@@ -132,7 +132,11 @@ Pending specs: 3 (1 reported before ExUnit, 2 reported after ExUnit)
 
 When `mix specs.run` is executed, the output should report the status of the specs, acceptance criteria and scenarios tested.
 
-For testing this, both specs and tests should be provided as fixtures.
+The specs dir and tests dir for the test environment are should be configured in [test.exs](../../runners/elixir/config/test.exs).
+
+### Scenario: Pending Spec
+
+- the specs is pending when it doesn't have a test file
 
 ### Scenario: Missing test file
 

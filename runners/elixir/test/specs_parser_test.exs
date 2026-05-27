@@ -125,7 +125,7 @@ defmodule SpecsRunner.SpecsParserTest do
       spec = SpecsParser.parse_file_stream!(spec_file_path, @specs_dir, @tests_dir)
 
       assert spec.path == "spec_with_scenarios.md"
-      assert spec.test_file_path == "spec_with_scenarios_test.exs"
+      assert spec.test_path == "spec_with_scenarios_test.exs"
     end
   end
 end

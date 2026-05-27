@@ -2,11 +2,10 @@ defmodule SpecsRunner.SpecsParser do
   @moduledoc false
 
   alias SpecsRunner.Core.{Spec, Test}
-  alias SpecsRunner.SpecsFile
 
-  def parse_file_stream!(spec_file_path, specs_dir, tests_dir) do
+  def parse_file_stream!(file_path, specs_dir, tests_dir) do
     state =
-      spec_file_path
+      file_path
       |> init_state(specs_dir, tests_dir)
       |> parse_file_lines()
       |> finalize_validation()
@@ -14,15 +13,15 @@ defmodule SpecsRunner.SpecsParser do
     state.spec
   end
 
-  defp init_state(spec_file_path, specs_dir, tests_dir) do
-    test_file_path =
-      spec_file_path
-      |> SpecsFile.test_file_path(specs_dir, tests_dir)
-      |> relative_path(tests_dir)
+  defp init_state(file_path, specs_dir, tests_dir) do
+    spec_file_path = Path.relative_to(file_path, specs_dir)
 
     %{
-      spec: %Spec{path: relative_path(spec_file_path, specs_dir), test_file_path: test_file_path},
-      spec_file_path: spec_file_path,
+      spec: %Spec{
+        path: spec_file_path,
+        test_path: test_path(spec_file_path, tests_dir)
+      },
+      file_path: file_path,
       in_acceptance_criteria?: false,
       acceptance_criteria_found?: false,
       has_criteria_tests?: false,
@@ -34,17 +33,18 @@ defmodule SpecsRunner.SpecsParser do
     }
   end
 
-  def relative_path(path, base_dir) do
-    path
-    |> normalize_path()
-    |> Path.relative_to(normalize_path(base_dir))
+  defp test_path(spec_file_path, tests_dir) do
+    Path.join(
+      tests_dir,
+      spec_file_path
+      |> Path.rootname()
+      |> Kernel.<>("_test.exs")
+    )
+    |> Path.relative_to(tests_dir)
   end
 
-  defp normalize_path(path) when is_list(path), do: path |> List.to_string() |> Path.expand()
-  defp normalize_path(path) when is_binary(path), do: Path.expand(path)
-
-  defp parse_file_lines(%{spec_file_path: spec_file_path} = state) do
-    spec_file_path
+  defp parse_file_lines(%{file_path: file_path} = state) do
+    file_path
     |> File.stream!(:line)
     |> Enum.reduce(state, fn line, acc_state ->
       line

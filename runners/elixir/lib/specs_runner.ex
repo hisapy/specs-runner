@@ -4,7 +4,6 @@ defmodule SpecsRunner do
   require Logger
   alias SpecsRunner.Core.RunInfo
   alias SpecsRunner.ExUnitCLIFormatter
-  alias SpecsRunner.SpecsFile
   alias SpecsRunner.SpecsParser
 
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
@@ -13,13 +12,17 @@ defmodule SpecsRunner do
     with :ok <- validate_dir(specs_dir),
          :ok <- validate_dir(tests_dir),
          :ok <- ensure_ex_unit_started() do
+      specs_dir = Path.expand(specs_dir)
+      tests_dir = Path.expand(tests_dir)
+
       run_info = RunInfo.new(specs_dir, tests_dir)
 
       run_info =
         specs_dir
         |> Path.join("**/*.md")
         |> Path.wildcard()
-        |> Task.async_stream(&SpecsParser.parse_file_stream!(&1, specs_dir, tests_dir),
+        |> Task.async_stream(
+          &SpecsParser.parse_file_stream!(&1, specs_dir, tests_dir),
           ordered: false,
           zip_input_on_exit: true
         )
@@ -45,18 +48,20 @@ defmodule SpecsRunner do
   end
 
   defp process_parsed_spec({:ok, spec}, run_info) when spec.errors == [] do
-    test_file = Path.join(run_info.tests_dir, spec.test_file_path)
+    test_file_path = Path.join(run_info.tests_dir, spec.test_path)
 
-    if SpecsFile.exists?(test_file) do
+    if File.exists?(test_file_path) do
       # what happens if the required file has a syntax error?
-      Code.require_file(test_file)
+      Code.require_file(test_file_path)
 
       RunInfo.add_spec(run_info, spec)
     else
+      test_path = Path.relative_to(spec.test_path, run_info.tests_dir)
+
       IO.puts(
         ExUnitCLIFormatter.colorize(
           :invalid,
-          "[Warn] No test file for #{spec.path}, expected: #{spec.test_file_path}"
+          "[Warn] No test file for #{spec.path}, expected: #{test_path}"
         )
       )
 

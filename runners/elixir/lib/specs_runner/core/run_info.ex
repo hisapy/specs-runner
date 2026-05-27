@@ -28,16 +28,16 @@ defmodule SpecsRunner.Core.RunInfo do
     }
   end
 
-  def add_spec(%__MODULE__{} = run_info, %Spec{test_file_path: test_file_path} = spec)
-      when is_binary(test_file_path) do
-    if Map.has_key?(run_info.specs, test_file_path) do
+  def add_spec(%__MODULE__{} = run_info, %Spec{test_path: test_path} = spec)
+      when is_binary(test_path) do
+    if Map.has_key?(run_info.specs, test_path) do
       raise ArgumentError, "duplicate spec path: #{spec.path}"
     end
 
-    %{run_info | specs: Map.put(run_info.specs, test_file_path, spec)}
+    %{run_info | specs: Map.put(run_info.specs, test_path, spec)}
   end
 
-  def fetch_spec!(%__MODULE__{} = run_info, test_file_path) when is_binary(test_file_path) do
-    Map.fetch!(run_info.specs, test_file_path)
+  def fetch_spec!(%__MODULE__{} = run_info, test_path) when is_binary(test_path) do
+    Map.fetch!(run_info.specs, test_path)
   end
 end

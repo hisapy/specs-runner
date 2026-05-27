@@ -5,7 +5,7 @@ defmodule SpecsRunner.Core.Spec do
 
   defstruct title: nil,
             path: nil,
-            test_file_path: nil,
+            test_path: nil,
             status: :pending,
             errors: [],
             tests: %{}
@@ -15,15 +15,11 @@ defmodule SpecsRunner.Core.Spec do
   @type t :: %__MODULE__{
           title: String.t(),
           path: String.t(),
-          test_file_path: String.t(),
+          test_path: String.t(),
           status: status(),
           errors: list(),
           tests: map()
         }
-
-  def new(spec_file_path, title \\ nil) do
-    %__MODULE__{path: spec_file_path, title: title}
-  end
 
   def add_test!(%__MODULE__{} = spec, %Test{} = test) do
     test_key = {test.scenario_name, test.name}

@@ -4,9 +4,6 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   """
   use GenServer
 
-  alias SpecsRunner.Core.RunInfo
-  alias SpecsRunner.SpecsParser
-
   import ExUnit.Formatter,
     only: [format_times: 1, format_filters: 2, format_test_failure: 5, format_test_all_failure: 5]
 
@@ -87,16 +84,15 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   end
 
   def handle_cast({:test_finished, %ExUnit.Test{state: nil} = test}, config) do
+    config = update_run_info(config, test, :passed)
+
     if config.trace do
       IO.puts(success(trace_test_result(test), config))
     else
       IO.write(success(".", config))
     end
 
-    config =
-      config
-      |> Map.put(:test_counter, update_test_counter(config.test_counter, test))
-      |> update_run_info(test, :passed)
+    config = %{config | test_counter: update_test_counter(config.test_counter, test)}
 
     {:noreply, update_test_timings(config, test)}
   end
@@ -124,7 +120,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
          %ExUnit.Test{state: {:invalid, %ExUnit.TestModule{state: {:failed, _}}}} = test},
         config
       ) do
-    print_failed_spec_header(test, config)
+    config = update_run_info(config, test, :failed)
 
     if config.trace do
       IO.puts(invalid(trace_test_result(test), config))
@@ -132,15 +128,13 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
       IO.write(invalid("?", config))
     end
 
-    config =
-      %{config | invalid_counter: config.invalid_counter + 1}
-      |> update_run_info(test, :failed)
+    config = %{config | invalid_counter: config.invalid_counter + 1}
 
     {:noreply, config}
   end
 
   def handle_cast({:test_finished, %ExUnit.Test{state: {:failed, failures}} = test}, config) do
-    print_failed_spec_header(test, config)
+    config = update_run_info(config, test, :failed)
 
     if config.trace do
       IO.puts(failure(trace_test_result(test), config))
@@ -162,14 +156,12 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     failure_counter = config.failure_counter + 1
     failure_type_counter = update_test_counter(config.failure_type_counter, test)
 
-    config =
-      %{
-        config
-        | test_counter: test_counter,
-          failure_counter: failure_counter,
-          failure_type_counter: failure_type_counter
-      }
-      |> update_run_info(test, :failed)
+    config = %{
+      config
+      | test_counter: test_counter,
+        failure_counter: failure_counter,
+        failure_type_counter: failure_type_counter
+    }
 
     {:noreply, update_test_timings(config, test)}
   end
@@ -256,49 +248,33 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, config}
   end
 
-  defp update_run_info(%{run_info: %RunInfo{} = run_info} = config, %ExUnit.Test{} = test, status) do
-    test_file_path =
-      test.tags
-      |> Map.fetch!(:file)
-      |> SpecsParser.relative_path(run_info.tests_dir)
+  defp update_run_info(config, %ExUnit.Test{} = test, status) do
+    test_path = Path.relative_to(test.tags.file, config.run_info.tests_dir)
+    scenario_name = Map.get(test.tags, :describe)
+    test_name = test_name(test, scenario_name)
 
-    scenario =
-      test.tags
-      |> Map.get(:describe)
-      |> scenario_name()
+    with %{tests: tests} = spec <- Map.get(config.run_info.specs, test_path, "Spec not found"),
+         %{status: _} <- Map.get(tests, {scenario_name, test_name}, "Test not found") do
+      if status == :failed,
+        do: IO.puts(failure("[Error] #{spec.path} (#{spec.title})", config))
 
-    test_name = test_name(test, scenario)
-
-    try do
-      run_info =
-        update_in(
-          run_info.specs[test_file_path].tests[{scenario, test_name}],
-          &%{&1 | status: status}
+      update_in(
+        config.run_info.specs[test_path].tests[{scenario_name, test_name}],
+        &%{&1 | status: status}
+      )
+    else
+      error_msg ->
+        IO.puts(
+          warning(
+            "[Warn] #{error_msg}\n" <>
+              "test_path=#{test_path}\n" <>
+              "scenario_name=#{scenario_name}\ntest_name=#{test_name}",
+            config
+          )
         )
-
-      %{config | run_info: run_info}
-    rescue
-      error ->
-        colorize(
-          :invalid,
-          "[Warn] Failed to update run_info for test_file_path=#{inspect(test_file_path)}, " <>
-            "scenario=#{inspect(scenario)}, test_name=#{inspect(test_name)}: " <>
-            Exception.message(error),
-          config
-        )
-        |> IO.puts()
 
         config
     end
-  end
-
-  def test_name(%ExUnit.Test{} = test) do
-    scenario =
-      test.tags
-      |> Map.get(:describe)
-      |> scenario_name()
-
-    test_name(test, scenario)
   end
 
   defp test_name(%ExUnit.Test{name: name}, nil) do
@@ -312,30 +288,6 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     |> to_string()
     |> String.replace_prefix("test #{scenario} ", "")
   end
-
-  defp scenario_name(nil), do: nil
-  defp scenario_name(scenario), do: to_string(scenario)
-
-  defp print_failed_spec_header(
-         %ExUnit.Test{} = test,
-         %{run_info: %RunInfo{} = run_info} = config
-       ) do
-    test_file_path =
-      test.tags
-      |> Map.fetch!(:file)
-      |> SpecsParser.relative_path(run_info.tests_dir)
-
-    case run_info.specs[test_file_path] do
-      %_{path: path, title: title} ->
-        header = if title, do: "[Error] #{path} (#{title})", else: "[Error] #{path}"
-        IO.puts(failure(header, config))
-
-      _ ->
-        :ok
-    end
-  end
-
-  defp print_failed_spec_header(%ExUnit.Test{} = _test, _config), do: :ok
 
   ## Tracing
 
@@ -446,8 +398,8 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
       "[#{trace_test_file_line(test)}]\n"
   end
 
-  defp format_slow_module({module, test_file_path, timings}) do
-    "#{inspect(module)} (#{format_us(timings)}ms)\n [#{Path.relative_to_cwd(test_file_path)}]\n"
+  defp format_slow_module({module, test_path, timings}) do
+    "#{inspect(module)} (#{format_us(timings)}ms)\n [#{Path.relative_to_cwd(test_path)}]\n"
   end
 
   defp update_test_timings(
@@ -623,6 +575,10 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
   defp failure(msg, config) do
     colorize(:failure, msg, config)
+  end
+
+  defp warning(msg, config) do
+    colorize(:invalid, msg, config)
   end
 
   defp extra_info(msg, config) do

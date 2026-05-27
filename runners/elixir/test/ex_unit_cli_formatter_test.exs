@@ -123,24 +123,6 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
     end
   end
 
-  describe "test name parsing" do
-    test "uses the raw ExUnit test name when scenario_name is nil" do
-      ex_unit_test = %ExUnit.Test{
-        name: :"test reports the spec as pending",
-        module: SpecsRunner.Specs.RunTest,
-        parameters: %{},
-        state: nil,
-        tags: %{
-          file: ~c"test/specs/elixir/run_specs_test.exs",
-          describe: nil,
-          test_type: :test
-        }
-      }
-
-      assert ExUnitCLIFormatter.test_name(ex_unit_test) == "reports the spec as pending"
-    end
-  end
-
   ## Test setup helpers
 
   defp run_info_with_one_spec(_context) do
@@ -155,7 +137,7 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
       Spec.add_test!(
         %Spec{
           path: "elixir/run_specs.md",
-          test_file_path: "elixir/run_specs_test.exs",
+          test_path: "elixir/run_specs_test.exs",
           title: "Run Specs"
         },
         test
