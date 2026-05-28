@@ -23,7 +23,7 @@ A more verbose or documentation-like output might be documented in another spec 
 
 The specs and tests directory should be configurable:
 
-- it should be possible to configure them with `Config`, e.g., in the `config.exs` file.
+- it should be possible to configure them with `Config`, e.g., in the `config.exs` file or [test.exs](../../runners/elixir/config/test.exs)
 - the configuration in the `config.exs` file should be overridable with CLI arguments
 
 ## Architecture
@@ -55,57 +55,44 @@ After parsing all the specs files, ExUnit is run with all the matching test file
 
 The output is similar to ExUnit's output but includes information about the spec file when an error happens. The reporter/formatter must keep track of valid specs to match `:test_finished` events from ExUnit to acceptance criteria items in the specs.
 
-The pending specs are reported at the end of the run. An specs file will be marked as pending if its test file is missing or if any of its acceptance criteria or scenarios are not implemented in the test file, and the output indicates the exact missing pieces including the line number in the spec file.
-
-Pending specs due to missing test files can be reported before ExUnit starts.
-
 ### Output example
 
 ```text
 $ mix specs.run
+SpecsRunner is running
+Specs directory: ../../specs/
+Tests directory: test/specs
 
-Specs Runner started
-Parsing specs from: specs
-
-[PARSE ERROR] specs/billing/missing_title.md:3
-	missing spec title (`# <title>`)
-
-[PARSE ERROR] specs/profile/repeated_acceptance_criteria.md:14
-	repeated acceptance criteria item: "User can upload an avatar"
-
-Pending specs (pre-run):
-
-- specs/orders/refund_flow.md
-	reason: missing test file
-	expected: orders/refund_flow_test.exs
-
-When rendering spec and test file paths in output, paths are displayed relative to
-the configured `specs_dir` and `tests_dir`.
+[INVALID] billing/missing_title.md:3
+	- missing spec title (`# <title>`)
+[PENDING] No test file for orders/refund_flow.md, expected: orders/refund_flow_test.exs
+[INVALID] profile/repeated_acceptance_criteria.md:14
+	- repeated acceptance criteria item: "User can upload an avatar"
 
 Running ExUnit with matched tests...
 
 ...
 
-specs/billing/update_payment_method.md (Update payment method)
+[FAILED] billing/update_payment_method.md (Update payment method)
 	1) test updates billing details (Specs.BillingTest)
 		 test/specs/billing_test.exs:42
 		 ** (RuntimeError) payment gateway timeout
 
-specs/security/revoke_api_token.md (Revoke API token)
+[FAILED] security/revoke_api_token.md (Revoke API token)
 	2) test revokes api token (Specs.SecurityTest)
 		 test/specs/security_test.exs:51
 		 ** (MatchError) no match of right hand side value: {:error, :unauthorized}
 
 ..
 
-specs/security/sign_out_everywhere.md (Sign out from all devices)
+[FAILED] security/sign_out_everywhere.md (Sign out from all devices)
 	3) test signs out from all devices (Specs.SecurityTest)
 		 test/specs/security_test.exs:77
 		 ** (ExUnit.AssertionError)
 
 .....
 
-specs/profile/update_email.md (Update profile email)
+[FAILED] profile/update_email.md (Update profile email)
 	4) test updates email (Specs.ProfileTest)
 		 test/specs/profile_test.exs:23
 		 ** (ArgumentError) invalid email format
@@ -113,50 +100,51 @@ specs/profile/update_email.md (Update profile email)
 Finished in 0.2 seconds
 14 tests, 4 errors
 
-Specs parser: 2 files with parsing errors
+[PENDING] billing/update_payment_method.md (Update payment method)
+	Scenario: Update succeeded
+	- sends an email to the user
 
-Pending specs: 3 (1 reported before ExUnit, 2 reported after ExUnit)
+	Scenario: Another stuff
+	- some stuff work
+	- other doesn't work
 
-- specs/profile/change_avatar.md
-	reason: missing test case
-	acceptance criteria: "User can remove avatar"
-	line: 18
+[PENDING] sso/github.md (Add GitHub SSO)
+	- sends an email to the user
 
-- specs/onboarding/invite_teammate.md
-	reason: missing scenario
-	scenario: "Scenario: Invite by email"
-	line: 22
 ```
 
 ## Acceptance Criteria
 
-When `mix specs.run` is executed, the output should report the status of the specs, acceptance criteria and scenarios tested.
+The output of `mix specs.run` should cover the following scenarios.
 
-The specs dir and tests dir for the test environment are should be configured in [test.exs](../../runners/elixir/config/test.exs).
+### Scenario: Invalid specs error
 
-### Scenario: Pending Spec
+- includes the specs file path
+- includes the title when present
+- when the specs title is missing or repeated
+- when the acceptance criteria section is missing or repeated
+- when a scenario is repeated or empty
+- when a test is repeated
 
-- the specs is pending when it doesn't have a test file
+### Scenario: Pending specs warning
 
-### Scenario: Missing test file
+- includes the specs path and title
+- when the test file is missing
+- with untested acceptance criteria
 
-- reports the spec as pending
-- shows the name of the missing test file
+### Scenario: Passed tests
 
-### Scenario: Missing describe block
+- print a green dot
 
-- reports the sepc as pending
-- reports the scenario as pending
-- shows the spec title and the missing describe block
+### Scenario: Failed tests
 
-### Scenario: Missing test case
+- include the specs path and title
+- report the errors like ExUnit
 
-- reports the sepc as pending
-- reports the acceptance criteria item as pending
-- shows the spec title and the missing test case
+### Scenario: Summary
 
-### Scenario: Missing test case in scenario
-
-- reports the sepc as pending
-- reports the scenario as pending
-- shows the spec title, scenario and the missing test case
+- includes the ExUnit summary
+- includes total specs count
+- includes passed specs count
+- includes pending specs count
+- includes failed specs count

@@ -61,7 +61,7 @@ defmodule SpecsRunner do
       IO.puts(
         ExUnitCLIFormatter.colorize(
           :invalid,
-          "[Warn] No test file for #{spec.path}, expected: #{test_path}"
+          "[PENDING] No test file for #{spec.path}, expected: #{test_path}"
         )
       )
 
@@ -73,7 +73,9 @@ defmodule SpecsRunner do
     spec_path = spec.path
 
     header =
-      if spec.title, do: "[Error] #{spec_path} (#{spec.title})", else: "[Error] #{spec_path}"
+      if spec.title,
+        do: "[INVALID] #{spec_path} (#{spec.title})",
+        else: "[INVALID] #{spec_path}"
 
     lines = Enum.map(spec.errors, &"  - #{&1}")
 

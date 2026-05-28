@@ -21,7 +21,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
     if opts[:seed] || opts[:max_cases] do
       IO.puts([
-        "Running ExUnit with seed: #{opts[:seed]}, max_cases: #{opts[:max_cases]}",
+        "\nRunning ExUnit with seed: #{opts[:seed]}, max_cases: #{opts[:max_cases]}",
         remaining
       ])
 
@@ -253,10 +253,10 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     scenario_name = Map.get(test.tags, :describe)
     test_name = test_name(test, scenario_name)
 
-    with %{tests: tests} = spec <- Map.get(config.run_info.specs, test_path, "Spec not found"),
-         %{status: _} <- Map.get(tests, {scenario_name, test_name}, "Test not found") do
+    with %{tests: tests} = spec <- Map.get(config.run_info.specs, test_path, "Specs not found"),
+         %{status: _} <- Map.get(tests, {scenario_name, test_name}, "Test not found in specs") do
       if status == :failed,
-        do: IO.puts(failure("[Error] #{spec.path} (#{spec.title})", config))
+        do: IO.puts(failure("\n[ERROR] #{spec.path} (#{spec.title})", config))
 
       update_in(
         config.run_info.specs[test_path].tests[{scenario_name, test_name}],
@@ -266,9 +266,9 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
       error_msg ->
         IO.puts(
           warning(
-            "[Warn] #{error_msg}\n" <>
+            "\n[ORPHAN] #{error_msg}\n" <>
               "test_path=#{test_path}\n" <>
-              "scenario_name=#{scenario_name}\ntest_name=#{test_name}",
+              "describe=#{scenario_name}\ntest_name=#{test_name}",
             config
           )
         )
@@ -485,11 +485,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   end
 
   defp print_failure(formatted, config) do
-    # credo:disable-for-next-line Credo.Check.Refactor.CondStatements
-    cond do
-      config.trace -> IO.puts("")
-      true -> IO.puts("\n")
-    end
+    if config.trace, do: IO.puts("")
 
     IO.puts(formatted)
   end

@@ -51,9 +51,9 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
       assert %{status: :failed} = spec.tests[{scenario_name, test_name}]
     end
 
-    test "prints [Error] spec/file/path (Spec Title)", %{output: output} do
+    test "prints [ERROR] spec/file/path (Spec Title)", %{output: output} do
       assert output =~
-               ExUnitCLIFormatter.colorize(:failure, "[Error] elixir/run_specs.md (Run Specs)")
+               ExUnitCLIFormatter.colorize(:failure, "\n[ERROR] elixir/run_specs.md (Run Specs)")
     end
 
     test "prints test errors like ExUnit does", %{output: output} do
@@ -69,10 +69,10 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
       assert output =~
                ExUnitCLIFormatter.colorize(
                  :failure,
-                 "[Error] elixir/run_specs.md (Run Specs)",
+                 "\n[ERROR] elixir/run_specs.md (Run Specs)",
                  colors
                ) <>
-                 "\n\n\n  1) test Missing test file reports the spec as pending (SpecsRunner.Specs.RunTest)\n     " <>
+                 "\n  1) test Missing test file reports the spec as pending (SpecsRunner.Specs.RunTest)\n     " <>
                  ExUnitCLIFormatter.colorize(
                    :location_info,
                    "test/specs/elixir/run_specs_test.exs:",
@@ -110,9 +110,9 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
       assert %{status: :failed} = spec.tests[{scenario_name, test_name}]
     end
 
-    test "prints [Error] spec/file/path (Spec Title)", %{output: output} do
+    test "prints [ERROR] spec/file/path (Spec Title)", %{output: output} do
       assert output =~
-               ExUnitCLIFormatter.colorize(:failure, "[Error] elixir/run_specs.md (Run Specs)")
+               ExUnitCLIFormatter.colorize(:failure, "\n[ERROR] elixir/run_specs.md (Run Specs)")
     end
 
     test "prints the invalid test message", %{output: output} do

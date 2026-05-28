@@ -1,4 +1,4 @@
-# Repeated Acceptance Criteria
+# Repeated Acceptance Criteria Section
 
 ## Acceptance Criteria
 
