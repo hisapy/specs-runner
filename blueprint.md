@@ -109,7 +109,7 @@ describe("Login Failed", () => {
 - `passed` - a spec passes when all its acceptance criteria pass
 - `failed` - a spec fails when any of its acceptance criteria fails
 - `pending` - a spec, acceptance critieria or scenario is pending if there are no matching tests
-- `orphan` - a test file, test group, or test is considered orphan if its matching spec, scenario, or acceptance criterion is not found in the expected `specs` directory
+- `orphan` - a test file, test group, or test should be reported as orphan if its matching spec, scenario, or acceptance criterion is not found in the `specs`
 
 ## Implementation Guidelines
 
