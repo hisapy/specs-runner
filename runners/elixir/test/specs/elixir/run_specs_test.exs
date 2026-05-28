@@ -6,22 +6,7 @@ defmodule SpecsRunner.Specs.RunTest do
 
   describe "Invalid specs error" do
     setup do
-      [
-        output:
-          capture_io(fn ->
-            # The specs dir and tests dir are configured in config/test.exs
-            Mix.Task.reenable("specs.run")
-            Mix.Task.run("specs.run", [])
-          end)
-      ]
-    end
-
-    test "includes the specs file path", %{output: output} do
-      assert output =~ "[INVALID] missing_title.md"
-    end
-
-    test "includes the title when present", %{output: output} do
-      assert output =~ "[INVALID] repeated_title.md (Repeated Title Spec)"
+      [output: run_mix_task()]
     end
 
     test "when the specs title is missing or repeated", %{output: output} do
@@ -48,5 +33,37 @@ defmodule SpecsRunner.Specs.RunTest do
     test "when a test is repeated", %{output: output} do
       assert output =~ "  - Test is repeated: Can be parsed - Scenario: Success"
     end
+  end
+
+  describe "Pending specs warning" do
+    setup do
+      [output: run_mix_task()]
+    end
+
+    test "with reason: missing test file", %{output: output} do
+      assert output =~ "[PENDING] pending.md (Pending Spec)"
+      assert output =~ "reason: missing test file"
+      assert output =~ "pending_test.exs"
+    end
+
+    test "with reason: missing scenario", %{output: output} do
+      assert output =~ "[PENDING] missing_scenario.md (Missing Scenario)"
+      assert output =~ "reason: missing scenario"
+      assert output =~ "Scenario: Missing scenario"
+    end
+
+    test "with reason: untested acceptance criteria", %{output: output} do
+      assert output =~ "[PENDING] untested_acceptance_criteria.md (Untested Acceptance Criteria)"
+      assert output =~ "reason: untested acceptance criteria"
+      assert output =~ "Remains pending without a matching test"
+    end
+  end
+
+  defp run_mix_task do
+    capture_io(fn ->
+      # The specs dir and tests dir are configured in config/test.exs
+      Mix.Task.reenable("specs.run")
+      Mix.Task.run("specs.run", [])
+    end)
   end
 end

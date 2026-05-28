@@ -65,7 +65,9 @@ Tests directory: test/specs
 
 [INVALID] billing/missing_title.md:3
 	- missing spec title (`# <title>`)
-[PENDING] No test file for orders/refund_flow.md, expected: orders/refund_flow_test.exs
+[PENDING] orders/refund_flow.md (Refund flow)
+	reason: missing test file
+	expected: orders/refund_flow_test.exs
 [INVALID] profile/repeated_acceptance_criteria.md:14
 	- repeated acceptance criteria item: "User can upload an avatar"
 
@@ -101,14 +103,13 @@ Finished in 0.2 seconds
 14 tests, 4 errors
 
 [PENDING] billing/update_payment_method.md (Update payment method)
+	reason: missing scenario
+
 	Scenario: Update succeeded
 	- sends an email to the user
 
-	Scenario: Another stuff
-	- some stuff work
-	- other doesn't work
-
 [PENDING] sso/github.md (Add GitHub SSO)
+	reason: untested acceptance criteria
 	- sends an email to the user
 
 ```
@@ -119,8 +120,6 @@ The output of `mix specs.run` should cover the following scenarios.
 
 ### Scenario: Invalid specs error
 
-- includes the specs file path
-- includes the title when present
 - when the specs title is missing or repeated
 - when the acceptance criteria section is missing or repeated
 - when a scenario is repeated or empty
@@ -128,9 +127,9 @@ The output of `mix specs.run` should cover the following scenarios.
 
 ### Scenario: Pending specs warning
 
-- includes the specs path and title
-- when the test file is missing
-- with untested acceptance criteria
+- with reason: missing test file
+- with reason: missing scenario
+- with reason: untested acceptance criteria
 
 ### Scenario: Passed tests
 
