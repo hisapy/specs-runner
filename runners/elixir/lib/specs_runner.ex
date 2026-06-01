@@ -7,8 +7,6 @@ defmodule SpecsRunner do
   alias SpecsRunner.SpecsParser
 
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
-    exunit_was_already_running? = Process.whereis(ExUnit.Server) != nil
-
     with :ok <- validate_dir(specs_dir),
          :ok <- validate_dir(tests_dir),
          :ok <- ensure_ex_unit_started() do
@@ -28,16 +26,13 @@ defmodule SpecsRunner do
         )
         |> Enum.reduce(run_info, &process_parsed_spec/2)
 
-      # Avoid infinite loop if ExUnit was already running before SpecsRunner.run/2 was called
-      unless exunit_was_already_running? do
-        ExUnit.start(
-          autorun: false,
-          formatters: [ExUnitCLIFormatter],
-          run_info: run_info
-        )
+      ExUnit.start(
+        autorun: false,
+        formatters: [ExUnitCLIFormatter],
+        run_info: run_info
+      )
 
-        ExUnit.run()
-      end
+      ExUnit.run()
 
       {:ok, %{run_info | end_time: DateTime.utc_now()}}
     end
@@ -58,10 +53,17 @@ defmodule SpecsRunner do
     else
       test_path = Path.relative_to(spec.test_path, run_info.tests_dir)
 
+      header = "[PENDING] #{spec.path} (#{spec.title})"
+
+      lines = [
+        "  reason: missing test file",
+        "  expected: #{test_path}"
+      ]
+
       IO.puts(
         ExUnitCLIFormatter.colorize(
           :invalid,
-          "[PENDING] No test file for #{spec.path}, expected: #{test_path}"
+          Enum.join([header | lines], "\n")
         )
       )
 

@@ -6,4 +6,4 @@
 
 ## Acceptance Criteria
 
-- Can still be parsed
+- This repeated section is invalid

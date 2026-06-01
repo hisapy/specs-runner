@@ -1,8 +1,8 @@
-defmodule SpecsRunner.Specs.MissingScenarioTest do
+defmodule SpecsRunner.Fixtures.UntestedAcceptanceCriteriaTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  describe "Matching scenario" do
+  describe "Partially implemented scenario" do
     test "Has a matching test" do
       assert true
     end

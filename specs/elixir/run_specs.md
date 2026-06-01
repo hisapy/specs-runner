@@ -103,7 +103,7 @@ Finished in 0.2 seconds
 14 tests, 4 errors
 
 [PENDING] billing/update_payment_method.md (Update payment method)
-	reason: missing scenario
+	reason: untested acceptance criteria
 
 	Scenario: Update succeeded
 	- sends an email to the user
@@ -128,7 +128,6 @@ The output of `mix specs.run` should cover the following scenarios.
 ### Scenario: Pending specs warning
 
 - with reason: missing test file
-- with reason: missing scenario
 - with reason: untested acceptance criteria
 
 ### Scenario: Passed tests

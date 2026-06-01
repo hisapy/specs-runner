@@ -1,14 +1,22 @@
 defmodule SpecsRunner.Specs.RunTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   import ExUnit.CaptureIO
 
-  describe "Invalid specs error" do
-    setup do
-      [output: run_mix_task()]
-    end
+  setup_all do
+    [
+      output:
+        capture_io(fn ->
+          # The specs dir and tests dir are configured in config/test.exs
+          Mix.Task.reenable("specs.run")
+          Mix.Task.run("specs.run", [])
+        end)
+        |> IO.iodata_to_binary()
+    ]
+  end
 
+  describe "Invalid specs error" do
     test "when the specs title is missing or repeated", %{output: output} do
       assert output =~ "[INVALID] missing_title.md\n  - Title not found in spec file"
       assert output =~ "[INVALID] repeated_title.md (Repeated Title Spec)\n  - Title is repeated"
@@ -36,34 +44,30 @@ defmodule SpecsRunner.Specs.RunTest do
   end
 
   describe "Pending specs warning" do
-    setup do
-      [output: run_mix_task()]
-    end
-
     test "with reason: missing test file", %{output: output} do
-      assert output =~ "[PENDING] pending.md (Pending Spec)"
-      assert output =~ "reason: missing test file"
-      assert output =~ "pending_test.exs"
-    end
-
-    test "with reason: missing scenario", %{output: output} do
-      assert output =~ "[PENDING] missing_scenario.md (Missing Scenario)"
-      assert output =~ "reason: missing scenario"
-      assert output =~ "Scenario: Missing scenario"
+      assert output =~
+               """
+               [PENDING] pending.md (Pending Spec)
+                 reason: missing test file
+                 expected: pending_test.exs
+               """
+               |> String.trim()
     end
 
     test "with reason: untested acceptance criteria", %{output: output} do
-      assert output =~ "[PENDING] untested_acceptance_criteria.md (Untested Acceptance Criteria)"
-      assert output =~ "reason: untested acceptance criteria"
-      assert output =~ "Remains pending without a matching test"
-    end
-  end
+      assert output =~
+               """
+               [PENDING] untested_acceptance_criteria.md (Untested Acceptance Criteria)
+                 reason: untested acceptance criteria
+                 - This has no matching test
 
-  defp run_mix_task do
-    capture_io(fn ->
-      # The specs dir and tests dir are configured in config/test.exs
-      Mix.Task.reenable("specs.run")
-      Mix.Task.run("specs.run", [])
-    end)
+                 Scenario: Missing scenario coverage
+                 - Also remains pending without a matching test
+
+                 Scenario: Partially implemented scenario
+                 - Remains pending without a matching test
+               """
+               |> String.trim()
+    end
   end
 end

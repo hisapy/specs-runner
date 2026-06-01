@@ -66,6 +66,8 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     IO.write("\n")
     IO.puts(format_times(times_us))
 
+    print_pending_specs(config)
+
     if config.slowest > 0 do
       IO.puts(format_slowest_tests(config, times_us.run))
     end
@@ -476,6 +478,46 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
   defp if_true(value, false, _fun), do: value
   defp if_true(value, true, fun), do: fun.(value)
+
+  defp print_pending_specs(%{run_info: %{specs: specs}} = config) do
+    specs
+    |> Map.values()
+    |> Enum.map(&pending_spec_output/1)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.each(fn output ->
+      IO.puts("")
+      IO.puts(warning(output, config))
+    end)
+  end
+
+  defp pending_spec_output(%{tests: tests} = spec) do
+    pending_tests =
+      tests
+      |> Map.values()
+      |> Enum.filter(&(&1.status == :pending))
+      |> Enum.group_by(& &1.scenario_name)
+
+    if pending_tests == %{} do
+      nil
+    else
+      lines = ["[PENDING] #{spec.path} (#{spec.title})", "  reason: untested acceptance criteria"]
+
+      lines =
+        Enum.reduce(pending_tests, lines, fn {scenario_name, tests}, acc ->
+          acc ++ pending_test_lines(scenario_name, tests)
+        end)
+
+      Enum.join(lines, "\n")
+    end
+  end
+
+  defp pending_test_lines(nil, tests) do
+    Enum.map(tests, &"  - #{&1.name}")
+  end
+
+  defp pending_test_lines(scenario_name, tests) do
+    ["", "  Scenario: #{scenario_name}" | Enum.map(tests, &"  - #{&1.name}")]
+  end
 
   defp print_filters(opts, key) do
     case Keyword.get(opts, key, []) do
