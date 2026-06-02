@@ -47,6 +47,7 @@ defmodule SpecsRunner do
 
     if File.exists?(test_file_path) do
       # what happens if the required file has a syntax error?
+      Code.unrequire_files([test_file_path])
       Code.require_file(test_file_path)
 
       RunInfo.add_spec(run_info, spec)
