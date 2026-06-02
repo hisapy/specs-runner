@@ -87,4 +87,10 @@ defmodule SpecsRunner.Specs.RunTest do
                |> String.trim()
     end
   end
+
+  describe "Passed tests" do
+    test "print a green dot", %{output: output} do
+      assert output =~ "\e[32m.\e[0m"
+    end
+  end
 end
