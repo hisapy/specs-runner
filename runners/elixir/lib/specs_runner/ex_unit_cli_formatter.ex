@@ -243,6 +243,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end
 
     print_summary(config, true)
+    print_specs_summary(config)
     {:noreply, config}
   end
 
@@ -474,10 +475,50 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
       true ->
         IO.puts(success(message, config))
     end
+
+    print_specs_summary(config)
   end
 
   defp if_true(value, false, _fun), do: value
   defp if_true(value, true, fun), do: fun.(value)
+
+  defp print_specs_summary(%{run_info: %{specs: specs}}) do
+    specs
+    |> Map.values()
+    |> Enum.reduce(%{total: 0, passed: 0, pending: 0, failed: 0}, fn spec, counts ->
+      status = spec_status(spec)
+
+      counts
+      |> Map.update!(:total, &(&1 + 1))
+      |> Map.update!(status, &(&1 + 1))
+    end)
+    |> then(fn counts ->
+      IO.puts(
+        [
+          "Specs summary:",
+          "  total: #{counts.total}",
+          "  passed: #{counts.passed}",
+          "  pending: #{counts.pending}",
+          "  failed: #{counts.failed}"
+        ]
+        |> Enum.join("\n")
+      )
+    end)
+  end
+
+  defp spec_status(%{tests: tests}) do
+    statuses =
+      tests
+      |> Map.values()
+      |> Enum.map(& &1.status)
+
+    cond do
+      statuses == [] -> :pending
+      Enum.any?(statuses, &(&1 == :failed)) -> :failed
+      Enum.any?(statuses, &(&1 == :pending)) -> :pending
+      true -> :passed
+    end
+  end
 
   defp print_pending_specs(%{run_info: %{specs: specs}} = config) do
     specs

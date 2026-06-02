@@ -141,7 +141,4 @@ The output of `mix specs.run` should cover the following scenarios.
 ### Scenario: Summary
 
 - includes the ExUnit summary
-- includes total specs count
-- includes passed specs count
-- includes pending specs count
-- includes failed specs count
+- counts total, passed, pending and failed specs

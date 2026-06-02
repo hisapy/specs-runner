@@ -93,4 +93,27 @@ defmodule SpecsRunner.Specs.RunTest do
       assert output =~ "\e[32m.\e[0m"
     end
   end
+
+  describe "Summary" do
+    test "includes the ExUnit summary", %{output: output} do
+      assert output =~
+               """
+               Result: 3/4 passed
+               \e[31mFailed: 1 test\e[0m
+               """
+               |> String.trim()
+    end
+
+    test "counts total, passed, pending and failed specs", %{output: output} do
+      assert output =~
+               """
+               Specs summary:
+                 total: 3
+                 passed: 1
+                 pending: 1
+                 failed: 1
+               """
+               |> String.trim()
+    end
+  end
 end
