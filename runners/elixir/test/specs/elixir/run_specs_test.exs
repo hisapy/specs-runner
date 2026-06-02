@@ -5,8 +5,8 @@ defmodule SpecsRunner.Specs.RunTest do
   import ExUnit.CaptureIO
 
   setup_all do
-    # previous_ansi_enabled = Application.get_env(:elixir, :ansi_enabled)
-    # Application.put_env(:elixir, :ansi_enabled, true)
+    previous_ansi_enabled = Application.get_env(:elixir, :ansi_enabled)
+    Application.put_env(:elixir, :ansi_enabled, true)
 
     [
       output:
@@ -16,15 +16,15 @@ defmodule SpecsRunner.Specs.RunTest do
           Mix.Task.run("specs.run", [])
         end)
         |> IO.iodata_to_binary()
-      # |> then(fn output ->
-      #   if is_nil(previous_ansi_enabled) do
-      #     Application.delete_env(:elixir, :ansi_enabled)
-      #   else
-      #     Application.put_env(:elixir, :ansi_enabled, previous_ansi_enabled)
-      #   end
+        |> then(fn output ->
+          if is_nil(previous_ansi_enabled) do
+            Application.delete_env(:elixir, :ansi_enabled)
+          else
+            Application.put_env(:elixir, :ansi_enabled, previous_ansi_enabled)
+          end
 
-      #   output
-      # end)
+          output
+        end)
     ]
   end
 
