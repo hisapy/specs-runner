@@ -134,10 +134,9 @@ The output of `mix specs.run` should cover the following scenarios.
 
 - print a green dot
 
-### Scenario: Failed tests
+### Scenario: Failed test error
 
-- include the specs path and title
-- report the errors like ExUnit
+- starts the specs path and title followed by the error detail
 
 ### Scenario: Summary
 

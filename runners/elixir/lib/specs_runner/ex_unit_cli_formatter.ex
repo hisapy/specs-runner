@@ -258,7 +258,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     with %{tests: tests} = spec <- Map.get(config.run_info.specs, test_path, "Specs not found"),
          %{status: _} <- Map.get(tests, {scenario_name, test_name}, "Test not found in specs") do
       if status == :failed,
-        do: IO.puts(failure("\n[ERROR] #{spec.path} (#{spec.title})", config))
+        do: IO.puts(failure("\n[FAILED] #{spec.path} (#{spec.title})", config))
 
       update_in(
         config.run_info.specs[test_path].tests[{scenario_name, test_name}],

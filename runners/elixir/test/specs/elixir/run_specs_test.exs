@@ -47,9 +47,9 @@ defmodule SpecsRunner.Specs.RunTest do
     test "with reason: missing test file", %{output: output} do
       assert output =~
                """
-               [PENDING] pending.md (Pending Spec)
+               \e[33m[PENDING] pending.md (Pending Spec)
                  reason: missing test file
-                 expected: pending_test.exs
+                 expected: pending_test.exs\e[0m
                """
                |> String.trim()
     end
@@ -57,7 +57,7 @@ defmodule SpecsRunner.Specs.RunTest do
     test "with reason: untested acceptance criteria", %{output: output} do
       assert output =~
                """
-               [PENDING] untested_acceptance_criteria.md (Untested Acceptance Criteria)
+               \e[33m[PENDING] untested_acceptance_criteria.md (Untested Acceptance Criteria)
                  reason: untested acceptance criteria
                  - This has no matching test
 
@@ -65,7 +65,24 @@ defmodule SpecsRunner.Specs.RunTest do
                  - Also remains pending without a matching test
 
                  Scenario: Partially implemented scenario
-                 - Remains pending without a matching test
+                 - Remains pending without a matching test\e[0m
+               """
+               |> String.trim()
+    end
+  end
+
+  describe "Failed test error" do
+    test "starts the specs path and title followed by the error detail", %{output: output} do
+      assert output =~
+               """
+                 \e[31m
+               [FAILED] failed.md (Failed Spec)\e[0m
+                 1) test Fails with an assertion error (SpecsRunner.Fixtures.FailedTest)
+                    \e[1m\e[30mtest_fixtures/failed_test.exs:5\e[0m
+                    \e[31mExpected truthy, got false\e[0m
+                    \e[36mcode: \e[0massert false
+                    \e[36mstacktrace:\e[0m
+                      test_fixtures/failed_test.exs:6: (test)
                """
                |> String.trim()
     end
