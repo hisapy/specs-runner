@@ -8,6 +8,9 @@ jobs:
   elixir-specs-runner:
     runs-on: ubuntu-latest
 
+    env:
+      MIX_TERM_COLOR: true
+
     defaults:
       run:
         working-directory: runners/elixir

@@ -38,7 +38,7 @@ defmodule SpecsRunner.MixProject do
         "compile --warnings-as-errors",
         "deps.unlock --unused",
         "credo",
-        "test"
+        "test --color"
       ]
     ]
   end
