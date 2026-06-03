@@ -32,10 +32,10 @@ This repository provides:
 
 ### 2. Specs For Elixir Runner
 
-- [ ] Complete and refine `specs/elixir/run_specs.md`
-- [ ] Add scenarios for passed and failed test reporting
-- [ ] Add scenarios for parsing and validation failures
-- [ ] Keep this phase focused on `mix specs.run`
+- [x] Complete and refine `specs/elixir/run_specs.md`
+- [x] Add scenarios for passed and failed test reporting
+- [x] Add scenarios for parsing and validation failures
+- [x] Keep this phase focused on `mix specs.run`
 - [ ] Add separate spec files later for:
 - [ ] generating tests from specs
 - [ ] filtering by status
@@ -45,7 +45,7 @@ This repository provides:
 - [ ] Implement `mix specs.run` from `specs/elixir/run_specs.md`
 - [ ] Iterate spec <-> fixture tests until behavior is stable
 - [ ] Ensure output reports spec/scenario/criteria status clearly
-- [ ] Validate with `mix ci` in `runners/elixir/`
+- [ ] Validate `runners/elixir/` in CI
 
 ### 4. Publish Elixir Runner (GitHub -> Hex)
 

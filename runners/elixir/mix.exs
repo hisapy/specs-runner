@@ -35,12 +35,10 @@ defmodule SpecsRunner.MixProject do
 
   defp aliases do
     [
-      ci: [
+      check: [
         "format --check-formatted",
         "compile --warnings-as-errors",
-        "deps.unlock --unused",
-        "credo",
-        "test --color --cover"
+        "credo"
       ]
     ]
   end
