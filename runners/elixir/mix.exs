@@ -8,7 +8,8 @@ defmodule SpecsRunner.MixProject do
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -21,13 +22,14 @@ defmodule SpecsRunner.MixProject do
 
   def cli do
     [
-      preferred_envs: [ci: :test]
+      preferred_envs: [ci: :test, coveralls: :test]
     ]
   end
 
   defp deps do
     [
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18.5", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -38,7 +40,7 @@ defmodule SpecsRunner.MixProject do
         "compile --warnings-as-errors",
         "deps.unlock --unused",
         "credo",
-        "test --color"
+        "test --color --cover"
       ]
     ]
   end
