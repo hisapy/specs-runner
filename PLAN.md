@@ -42,10 +42,10 @@ This repository provides:
 
 ### 3. Elixir Runner Implementation: `mix specs.run`
 
-- [ ] Implement `mix specs.run` from `specs/elixir/run_specs.md`
-- [ ] Iterate spec <-> fixture tests until behavior is stable
-- [ ] Ensure output reports spec/scenario/criteria status clearly
-- [ ] Validate `runners/elixir/` in CI
+- [x] Implement `mix specs.run` from `specs/elixir/run_specs.md`
+- [x] Iterate spec <-> fixture tests until behavior is stable
+- [x] Ensure output reports spec/scenario/criteria status clearly
+- [x] Validate `runners/elixir/` in CI
 
 ### 4. Publish Elixir Runner (GitHub -> Hex)
 
