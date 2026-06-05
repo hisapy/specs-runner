@@ -8,8 +8,8 @@ defmodule SpecsRunner.MixProject do
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
-      # test_coverage: [tool: ExCoveralls]
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
