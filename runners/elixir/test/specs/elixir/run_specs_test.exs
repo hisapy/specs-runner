@@ -1,4 +1,4 @@
-defmodule SpecsRunner.Specs.RunTest do
+defmodule SpecsRunner.RunSpecsTest do
   @moduledoc false
   use ExUnit.Case, async: false
 
