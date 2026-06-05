@@ -123,6 +123,41 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
     end
   end
 
+  describe "handle_cast/2 :test_finished orphan" do
+    @describetag ex_unit_test_state: :passed
+
+    setup [
+      :run_info_with_one_spec,
+      :formatter,
+      :ex_unit_test
+    ]
+
+    test "prints an orphan warning and leaves run info unchanged", %{
+      formatter: formatter,
+      ex_unit_test: ex_unit_test,
+      run_info: run_info,
+      scenario_name: scenario_name,
+      test_name: test_name
+    } do
+      orphan_test = put_in(ex_unit_test.tags.file, ~c"test/specs/elixir/orphan_test.exs")
+
+      {updated_run_info, output} =
+        with_io(formatter, fn ->
+          GenServer.cast(formatter, {:test_finished, orphan_test})
+
+          :sys.get_state(formatter)[:run_info]
+        end)
+
+      assert updated_run_info == run_info
+
+      assert output =~ "[ORPHAN] Specs not found"
+      assert output =~ "test_path=elixir/orphan_test.exs"
+      assert output =~ "describe=#{scenario_name}"
+      assert output =~ "test_name=#{test_name}"
+      assert output =~ ExUnitCLIFormatter.colorize(:success, ".")
+    end
+  end
+
   ## Test setup helpers
 
   defp run_info_with_one_spec(_context) do

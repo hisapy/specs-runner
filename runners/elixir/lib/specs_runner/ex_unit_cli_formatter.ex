@@ -14,6 +14,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
 
     remaining =
       if repeat_until_failure > 0 do
+        # coveralls-ignore-next-line
         ", remaining_runs: #{Keyword.get(opts, :remaining_runs)}"
       else
         ""
@@ -50,6 +51,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:ok, config}
   end
 
+  # coveralls-ignore-start
   def handle_cast({:suite_started, _opts}, config) do
     if config.dry_run, do: IO.puts(extra_info("Tests that would be executed:", config))
 
@@ -85,10 +87,13 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, config}
   end
 
+  # coveralls-ignore-stop
+
   def handle_cast({:test_finished, %ExUnit.Test{state: nil} = test}, config) do
     config = update_run_info(config, test, :passed)
 
     if config.trace do
+      # coveralls-ignore-next-line
       IO.puts(success(trace_test_result(test), config))
     else
       IO.write(success(".", config))
@@ -99,6 +104,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, update_test_timings(config, test)}
   end
 
+  # coveralls-ignore-start
   def handle_cast({:test_finished, %ExUnit.Test{state: {:excluded, reason}} = test}, config)
       when is_binary(reason) do
     if config.trace, do: IO.puts(trace_test_excluded(test))
@@ -117,6 +123,8 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, %{config | skipped_counter: config.skipped_counter + 1}}
   end
 
+  # coveralls-ignore-stop
+
   def handle_cast(
         {:test_finished,
          %ExUnit.Test{state: {:invalid, %ExUnit.TestModule{state: {:failed, _}}}} = test},
@@ -125,6 +133,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     config = update_run_info(config, test, :failed)
 
     if config.trace do
+      # coveralls-ignore-next-line
       IO.puts(invalid(trace_test_result(test), config))
     else
       IO.write(invalid("?", config))
@@ -138,9 +147,12 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
   def handle_cast({:test_finished, %ExUnit.Test{state: {:failed, failures}} = test}, config) do
     config = update_run_info(config, test, :failed)
 
+    # coveralls-ignore-start
     if config.trace do
       IO.puts(failure(trace_test_result(test), config))
     end
+
+    # coveralls-ignore-stop
 
     formatted =
       format_test_failure(
@@ -168,6 +180,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, update_test_timings(config, test)}
   end
 
+  # coveralls-ignore-start
   def handle_cast({:module_started, %ExUnit.TestModule{} = module}, config) do
     if config.trace do
       %{name: name, file: file, parameters: parameters} = module
@@ -251,6 +264,8 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     {:noreply, config}
   end
 
+  # coveralls-ignore-stop
+
   defp update_run_info(config, %ExUnit.Test{} = test, status) do
     test_path = Path.relative_to(test.tags.file, config.run_info.tests_dir)
     scenario_name = Map.get(test.tags, :describe)
@@ -292,6 +307,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     |> String.replace_prefix("test #{scenario} ", "")
   end
 
+  # coveralls-ignore-start
   ## Tracing
 
   defp trace_test_time(%ExUnit.Test{time: time}) do
@@ -345,10 +361,13 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end
   end
 
+  # coveralls-ignore-stop
+
   defp update_test_counter(test_counter, %{tags: %{test_type: test_type}}) do
     Map.update(test_counter, test_type, 1, &(&1 + 1))
   end
 
+  # coveralls-ignore-start
   ## Slowest
 
   defp format_slowest_tests(%{slowest: slowest, test_timings: timings}, run_us) do
@@ -405,18 +424,22 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     "#{inspect(module)} (#{format_us(timings)}ms)\n [#{Path.relative_to_cwd(test_path)}]\n"
   end
 
+  # coveralls-ignore-stop
+
   defp update_test_timings(
          %{slowest: slowest, slowest_modules: slowest_modules} = config,
          %ExUnit.Test{} = test
        ) do
     if slowest > 0 or slowest_modules > 0 do
       # Do not store logs, as they are not used for timings and consume memory.
+      # coveralls-ignore-next-line
       update_in(config.test_timings, &[%{test | logs: ""} | &1])
     else
       config
     end
   end
 
+  # coveralls-ignore-start
   ## Printing
 
   # credo:disable-for-lines:56 Credo.Check.Refactor.CyclomaticComplexity
@@ -567,12 +590,16 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end
   end
 
+  # coveralls-ignore-stop
+
   defp print_failure(formatted, config) do
+    # coveralls-ignore-next-line
     if config.trace, do: IO.puts("")
 
     IO.puts(formatted)
   end
 
+  # coveralls-ignore-start
   defp format_type_counts(type_counter) do
     type_counter
     |> Enum.sort()
@@ -619,6 +646,8 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end)
   end
 
+  # coveralls-ignore-stop
+
   # Color styles
 
   def colorize(key, string, %{colors: colors} \\ %{colors: colors(colors: [])}) do
@@ -632,6 +661,7 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end
   end
 
+  # coveralls-ignore-start
   defp colorize_doc(escape, doc, %{colors: colors}) do
     if colors[:enabled] do
       Inspect.Algebra.color_doc(doc, escape, %Inspect.Opts{syntax_colors: colors})
@@ -689,8 +719,11 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     end
   end
 
+  # coveralls-ignore-stop
+
   defp formatter(key, msg, config), do: colorize(key, msg, config)
 
+  # coveralls-ignore-start
   defp pluralize(1, singular, _plural), do: singular
   defp pluralize(_, _singular, plural), do: plural
 
@@ -723,11 +756,16 @@ defmodule SpecsRunner.ExUnitCLIFormatter do
     |> Keyword.put_new(:enabled, IO.ANSI.enabled?())
   end
 
+  # coveralls-ignore-stop
+
   defp print_logs(""), do: nil
 
+  # coveralls-ignore-start
   defp print_logs(output) do
     indent = "\n     "
     output = String.replace(output, "\n", indent)
     IO.puts(["     The following output was logged:", indent | output])
   end
+
+  # coveralls-ignore-stop
 end
