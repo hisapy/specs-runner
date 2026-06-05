@@ -9,3 +9,11 @@ It provides:
 - specs for building a specs runner in [specs](./specs/)
 - default runner implementations in [runners](./runners)
 - an AI skill for using a specs runner: `skills/spec-runner-usage/SKILL.md`
+
+## Open source
+
+- License: [MIT](./LICENSE)
+- Contributions: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Code of Conduct: [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](./SECURITY.md)
+- Support: [SUPPORT.md](./SUPPORT.md)
