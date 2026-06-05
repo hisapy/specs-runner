@@ -18,3 +18,19 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/specs_runner>.
+
+## Development
+
+During development you can run `mix specs.run` against its own specs:
+
+```sh
+MIX_ENV=test mix specs.run --specs-dir ../../specs/elixir --tests-dir test/specs/elixir
+```
+
+NOTICE that `MIX_ENV=test` is used.
+
+Or you can run it against the fixture specs:
+
+```sh
+mix specs.run --specs-dir ../../specs/fixtures --tests-dir test_fixtures
+```
