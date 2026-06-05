@@ -10,7 +10,6 @@ jobs:
 
     env:
       MIX_TERM_COLOR: true
-      MIX_ENV: test
 
     defaults:
       run:
@@ -31,7 +30,10 @@ jobs:
       - name: Check code
         run: mix check
 
-      - name: Run Tests
-        run: mix coveralls.github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run tests
+        run: mix test --color --cover
+
+      # - name: Test
+      #   run: mix coveralls.github
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
