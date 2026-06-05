@@ -10,6 +10,7 @@ jobs:
 
     env:
       MIX_TERM_COLOR: true
+      MIX_ENV: test
 
     defaults:
       run:
