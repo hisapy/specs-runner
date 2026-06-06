@@ -10,6 +10,15 @@ It provides:
 - default runner implementations in [runners](./runners)
 - an AI skill for using a specs runner: `skills/spec-runner-usage/SKILL.md`
 
+## Runners
+
+<table>
+  <tr>
+    <td valign="middle"><a href="./runners/elixir/README.md">Elixir</a></td>
+    <td valign="middle"><img src="https://github.com/hisapy/specs-runner/actions/workflows/ci.yml/badge.svg" alt="" /> <a href="https://coveralls.io/github/hisapy/specs-runner?branch=main"><img src="https://coveralls.io/repos/github/hisapy/specs-runner/badge.svg?branch=main" alt="Coverage Status" /></a></td>
+  </tr>
+</table>
+
 ## Open source
 
 - License: [MIT](./LICENSE)
