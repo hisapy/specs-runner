@@ -40,15 +40,6 @@ This repository defines a framework for Markdown-based executable specifications
 - Use the validation command(s) defined in the nearest applicable subdirectory `AGENTS.md` file (for example, `runners/elixir/AGENTS.md`).
 - If changes span multiple runner ecosystems, run all applicable validations for each affected ecosystem.
 
-## Ok implement
-
-- Use this flow when the user reply is exactly "ok implement" or when asking to turn to "ok immplement" mode.
-- Treat prior planning/discussion in the thread as approved implementation scope.
-- Apply the agreed changes without re-explaining the planned edits.
-- Run all required validation command(s) for affected ecosystems.
-- Report completion/status and validation outcome only.
-- Explain file changes only when the user explicitly asks for an explanation.
-
 ## Agent Interaction
 
 - Keep responses concise and action-oriented by default.
