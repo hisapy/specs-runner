@@ -1,11 +1,11 @@
 ---
 name: spec-authoring
-description: Write specs in Markdown
+description: Write, edit, and fix Markdown specs with acceptance criteria that can be run as acceptance tests. Activate when the user asks for a runnable spec or mentions acceptance criteria, scenarios, or the specs-runner tool.
 ---
 
 # Spec Authoring
 
-Use this skill to write specs with acceptance criteria that can be run as acceptance tests.
+Use this skill to write specs with acceptance criteria that can be run as acceptance tests, like Behavior-Driven Development (BDD) but without Gherkin.
 
 The program that reads these specs and runs them as tests is called `specs-runner`.
 
@@ -66,4 +66,5 @@ _Optional text, section or other content describing the feature or requirement a
 - Keep acceptance criteria concise, specific, and independently testable — each bullet must describe an observable behavior and a verifiable outcome.
 - Use scenarios to group related acceptance criteria by specific contexts or conditions.
 - Write short scenario titles and acceptance criteria list items because these will be used to match test suite blocks (e.g. `describe`, `context`, `test`, `it`).
-- When editing an existing spec, preserve the original author's style and structure, but correct any violations of the Required Format rules above.
+- When editing existing content, preserve all existing content and wording. Do not delete or rewrite anything the user wrote.
+- Before adding any structural elements (H1 title, `## Acceptance Criteria` section, scenarios), ask the user first. Present your suggestion and let them decide — don't add them silently.
