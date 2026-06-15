@@ -1,0 +1,50 @@
+{
+  "skill_name": "spec-authoring",
+  "evals": [
+    {
+      "id": 1,
+      "name": "basic-spec",
+      "prompt": "Write a spec for a user login feature. It needs email and password fields.",
+      "expected_output": "A spec with one H1, an Acceptance Criteria section with testable bullet conditions, no scenarios.",
+      "files": [],
+      "assertions": [
+        "Exactly one H1 heading in the output",
+        "Has exactly one section named `## Acceptance Criteria`",
+        "No `### Scenario:` headings present",
+        "Acceptance criteria list items describe observable behaviors with verifiable outcomes",
+        "Bullets are under the Acceptance Criteria section, not nested under scenarios"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "fix-incomplete-spec",
+      "prompt": "I found this old spec in our docs. Can you make it a proper spec?",
+      "expected_output": "A valid spec with H1 added, Acceptance Criteria section added, original content preserved as body text, and the agent asked the user where orphan bullets should go.",
+      "files": ["files/incomplete-spec.md"],
+      "assertions": [
+        "Output has exactly one H1 heading",
+        "Output has exactly one `## Acceptance Criteria` section",
+        "H1 title is derived from the input context, not arbitrarily rewritten",
+        "Original non-structural content from input is preserved as specs body (not deleted)",
+        "Agent asked the user about placement of orphan bullet content (did not silently move it into AC)",
+        "Original phrasing and structure from the input is preserved, not wholesale rewritten"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "scenarios-spec",
+      "prompt": "Write a spec for processing customer orders. Orders can be pending, shipped, delivered, or cancelled, and each status has different behaviors.",
+      "expected_output": "A spec with one H1, an Acceptance Criteria section, and a Scenario subsection per order status.",
+      "files": [],
+      "assertions": [
+        "Exactly one H1 heading in the output",
+        "Has exactly one `## Acceptance Criteria` section",
+        "Has at least 3 `### Scenario:` headings for different order statuses",
+        "Each scenario has at least one bullet list item",
+        "No bullet list items directly under `## Acceptance Criteria` (all under scenarios)",
+        "Scenario titles are short noun phrases, not full sentences",
+        "No duplicate scenario names"
+      ]
+    }
+  ]
+}

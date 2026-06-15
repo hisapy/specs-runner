@@ -1,0 +1,14 @@
+[
+  {"query": "Write a spec for the search feature with acceptance criteria", "should_trigger": true},
+  {"query": "can you turn these requirements into a proper spec markdown file with scenarios", "should_trigger": true},
+  {"query": "I need to document acceptance criteria for the checkout flow - make it a spec", "should_trigger": true},
+  {"query": "Create acceptance criteria specs for the API endpoints", "should_trigger": true},
+  {"query": "add a scenario for when the user enters an invalid email in the login spec", "should_trigger": true},
+  {"query": "fix the formatting of this spec file, the acceptance criteria section is missing", "should_trigger": true},
+  {"query": "how do I run the specs in this project", "should_trigger": false},
+  {"query": "what is the pass rate of the current specs", "should_trigger": false},
+  {"query": "install the dependencies for this elixir project", "should_trigger": false},
+  {"query": "explain how the testing framework works in this repo", "should_trigger": false},
+  {"query": "debug this failing test in the user model", "should_trigger": false},
+  {"query": "add error handling to the payment controller", "should_trigger": false}
+]
