@@ -45,6 +45,35 @@
         "Scenario titles are short noun phrases, not full sentences",
         "No duplicate scenario names"
       ]
+    },
+    {
+      "id": 4,
+      "name": "preserve-existing-content",
+      "prompt": "Here is a spec draft: <markdown># User Profile\n\nA user can view and edit their profile.\n\n## Acceptance Criteria\n\n- Users can update their name\n- Users can update their email</markdown>. Can you make it a proper spec?",
+      "expected_output": "The spec remains unchanged since it already has valid structure: H1, Acceptance Criteria section, and bullets.",
+      "files": [],
+      "assertions": [
+        "Output remains unchanged (no structural changes needed)",
+        "Has exactly one H1 heading",
+        "Has exactly one `## Acceptance Criteria` section",
+        "Bullet list items are preserved verbatim",
+        "No scenarios added unnecessarily"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "scenario-refinement",
+      "prompt": "Improve this spec by adding scenarios to group these acceptance criteria:\n\n# Product Catalog\n\n## Acceptance Criteria\n\n- Users can search by name\n- Users can filter by category\n- Users can sort by price\n- Users can sort by name\n- Users can view product details\n- Users see error for invalid product ID",
+      "expected_output": "A spec with scenarios grouping related acceptance criteria (search/filter/sort vs product view/error).",
+      "files": [],
+      "assertions": [
+        "Exactly one H1 heading in the output",
+        "Has exactly one `## Acceptance Criteria` section",
+        "Has at least 2 `### Scenario:` headings",
+        "Scenarios group logically related bullets",
+        "All original bullets are preserved under appropriate scenarios",
+        "Agent asked user before adding scenarios to valid spec"
+      ]
     }
   ]
 }

@@ -10,5 +10,8 @@
   {"query": "install the dependencies for this elixir project", "should_trigger": false},
   {"query": "explain how the testing framework works in this repo", "should_trigger": false},
   {"query": "debug this failing test in the user model", "should_trigger": false},
-  {"query": "add error handling to the payment controller", "should_trigger": false}
+  {"query": "add error handling to the payment controller", "should_trigger": false},
+  {"query": "I want to use the specs-runner tool to create specs", "should_trigger": true},
+  {"query": "run specs-runner to generate test scaffolding from my spec", "should_trigger": false},
+  {"query": "make this spec runnable as acceptance tests", "should_trigger": true}
 ]
