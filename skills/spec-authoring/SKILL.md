@@ -33,8 +33,8 @@ _Optional text, section or other content describing the feature or requirement a
 
 ## Acceptance Criteria
 
-- _A specific, testable condition that must be met_
-- _Another specific, testable condition_
+- _Performs an observable action or yields an observable result_
+- _Rejects invalid input and leaves state unchanged_
 ```
 
 ## Spec template with scenarios
@@ -50,13 +50,13 @@ _Optional text, section or other content describing the feature or requirement a
 
 ### Scenario: With valid input
 
-- _A specific, testable condition that must be met_
-- _Another specific, testable condition_
+- _Performs an observable action or yields an observable result_
+- _Rejects invalid input and leaves state unchanged_
 
 ### Scenario: With invalid input
 
-- _A specific, testable condition that must be met_
-- _Another specific, testable condition_
+- _Performs an observable action or yields an observable result_
+- _Rejects invalid input and leaves state unchanged_
 ```
 
 ## Guidance
