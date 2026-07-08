@@ -33,8 +33,8 @@ _Optional text, section or other content describing the feature or requirement a
 
 ## Acceptance Criteria
 
-- _Performs an observable action or yields an observable result_
-- _Rejects invalid input and leaves state unchanged_
+- _The system performs an observable action or yields an observable result_
+- _The system rejects invalid input and leaves state unchanged_
 ```
 
 ## Spec template with scenarios
@@ -50,19 +50,20 @@ _Optional text, section or other content describing the feature or requirement a
 
 ### Scenario: With valid input
 
-- _Performs an observable action or yields an observable result_
-- _Rejects invalid input and leaves state unchanged_
+- _The system performs an observable action or yields an observable result_
+- _The system rejects invalid input and leaves state unchanged_
 
 ### Scenario: With invalid input
 
-- _Performs an observable action or yields an observable result_
-- _Rejects invalid input and leaves state unchanged_
+- _The system performs an observable action or yields an observable result_
+- _The system rejects invalid input and leaves state unchanged_
 ```
 
 ## Guidance
 
 - In general, follow best practices of Behavior-Driven Development (BDD) but without the need to write in Gherkin syntax.
 - Acceptance criteria should describe an expected behavior, not implementation details.
+- Prefer active voice for acceptance criteria bullets: start with a verb that describes what the system does or what outcome it produces (e.g., "debits the buy-in from the user's funds", "rejects joining when funds are insufficient"). This makes each bullet read like a small, testable action.
 - Keep acceptance criteria concise, specific, and independently testable — each bullet must describe an observable behavior and a verifiable outcome.
 - Use scenarios to group related acceptance criteria by specific contexts or conditions.
 - Write short scenario titles and acceptance criteria list items because these will be used to match test suite blocks (e.g. `describe`, `context`, `test`, `it`).
