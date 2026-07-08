@@ -12,8 +12,8 @@ defmodule Mix.Tasks.Specs.Run do
 
   ## Options
 
-    * `--specs-dir` - directory containing Markdown spec files (optional; defaults to config)
-    * `--tests-dir` - directory containing ExUnit test files (optional; defaults to config)
+    * `--specs-dir` - directory containing Markdown spec files (optional; defaults to "specs")
+    * `--tests-dir` - directory containing ExUnit test files (optional; defaults to "test/specs")
 
   ## Config
 
@@ -37,13 +37,16 @@ defmodule Mix.Tasks.Specs.Run do
     tests_dir: :string
   ]
 
+  @default_specs_dir "specs"
+  @default_tests_dir "test/specs"
+
   @impl Mix.Task
   def run(args) do
     {opts, _argv} = OptionParser.parse!(args, strict: @options)
-    default_opts = Application.get_all_env(:specs_runner)
+    env_config = Application.get_all_env(:specs_runner)
 
-    specs_dir = require_non_empty_str!(opts, :specs_dir, default_opts)
-    tests_dir = require_non_empty_str!(opts, :tests_dir, default_opts)
+    specs_dir = get_config_value(opts, env_config, :specs_dir)
+    tests_dir = get_config_value(opts, env_config, :tests_dir)
 
     Mix.shell().info([
       "SpecsRunner is running\n",
@@ -61,8 +64,9 @@ defmodule Mix.Tasks.Specs.Run do
     end
   end
 
-  defp require_non_empty_str!(opts, key, default_opts) do
-    value = Keyword.get(opts, key, Keyword.get(default_opts, key))
+  defp get_config_value(opts, env_config, key) do
+    fallback = Keyword.get(env_config, key, default(key))
+    value = Keyword.get(opts, key, fallback)
 
     if is_binary(value) and String.trim(value) != "" do
       value
@@ -70,4 +74,7 @@ defmodule Mix.Tasks.Specs.Run do
       raise ArgumentError, "#{key} must be a non-empty string, got: #{inspect(value)}"
     end
   end
+
+  defp default(:specs_dir), do: @default_specs_dir
+  defp default(:tests_dir), do: @default_tests_dir
 end
