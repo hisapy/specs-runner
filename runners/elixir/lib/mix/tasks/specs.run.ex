@@ -30,6 +30,8 @@ defmodule Mix.Tasks.Specs.Run do
 
   use Mix.Task
 
+  @requirements ["app.start"]
+
   @shortdoc "Runs Markdown specs against mapped ExUnit tests"
 
   @options [
