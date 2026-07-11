@@ -37,7 +37,7 @@ This repository provides:
 - [x] Add scenarios for parsing and validation failures
 - [x] Keep this phase focused on `mix specs.run`
 - [ ] Add separate spec files later for:
-- [ ] generating tests from specs
+- [x] generating tests from specs
 - [ ] filtering by status
 
 ### 3. Elixir Runner Implementation: `mix specs.run`
