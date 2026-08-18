@@ -28,4 +28,3 @@ It follows the matching spec files to ExUnit tests rules from [run_specs](run_sp
 - generates valid ExUnit test syntax
 - uses the acceptance criteria text as the test name
 - includes a `skip` call by default for generated tests to be explicit about untested behavior
-- follows Elixir naming conventions for test modules and functions
