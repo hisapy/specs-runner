@@ -1,10 +1,10 @@
 # Generate Tests from Specs
 
-An Elixir Mix task called `specs.gen` that generates ExUnit test scaffolding for pending specs based on the [run_specs](run_specs.md) matching rules.
+An Elixir Mix task called `specs.generate_tests` that generates ExUnit test scaffolding for a given spec based on the [run_specs](run_specs.md) matching rules.
 
 ## Behavior
 
-The `specs.gen` task scans specs files and generates test files or test blocks for specs that don't have matching tests yet.
+The `specs.generate_tests` task takes a single spec file path as an argument and generates a test file or test blocks for that spec if it doesn't have matching tests yet. Requiring an explicit spec path keeps concurrent invocations (e.g. multiple agents working on different specs) safe, since each run only reads and writes the files for one spec.
 
 It follows the matching spec files to ExUnit tests rules from [run_specs](run_specs.md#matching-spec-files-to-exunit-tests) to determine where and how to create test code.
 
@@ -27,4 +27,4 @@ It follows the matching spec files to ExUnit tests rules from [run_specs](run_sp
 
 - generates valid ExUnit test syntax
 - uses the acceptance criteria text as the test name
-- includes a `skip` call by default for generated tests to be explicit about untested behavior
+- generates tests without a body to be explicit about untested behavior

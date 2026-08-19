@@ -5,6 +5,9 @@ defmodule SpecsRunner do
   alias SpecsRunner.Core.RunInfo
   alias SpecsRunner.ExUnitCLIFormatter
   alias SpecsRunner.SpecsParser
+  alias SpecsRunner.TestFileUpdater
+  alias SpecsRunner.TestFileWriter
+  alias SpecsRunner.TestOutline
 
   def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
     with :ok <- validate_dir(specs_dir),
@@ -102,5 +105,71 @@ defmodule SpecsRunner do
       {:ok, _started_apps} -> :ok
       {:error, reason} -> {:error, "Failed to start :ex_unit app: #{inspect(reason)}"}
     end
+  end
+
+  def generate_tests(spec_path, specs_dir, tests_dir)
+      when is_binary(spec_path) and is_binary(specs_dir) and is_binary(tests_dir) do
+    with :ok <- validate_dir(specs_dir),
+         :ok <- validate_file(spec_path) do
+      specs_dir = Path.expand(specs_dir)
+      tests_dir = Path.expand(tests_dir)
+
+      spec_path
+      |> SpecsParser.parse_file_stream!(specs_dir, tests_dir)
+      |> generate_tests_for_spec(tests_dir)
+    end
+  end
+
+  defp generate_tests_for_spec(%{errors: []} = spec, tests_dir) do
+    test_path = Path.join(tests_dir, spec.test_path)
+    outline = TestOutline.from_spec(spec)
+
+    if File.exists?(test_path) do
+      update_test_file(test_path, spec.test_path, outline)
+    else
+      create_test_file(test_path, spec.test_path, outline)
+    end
+  end
+
+  defp generate_tests_for_spec(spec, _tests_dir), do: {:error, {:invalid_spec, spec.errors}}
+
+  defp update_test_file(test_path, relative_test_path, outline) do
+    before_count = existing_test_count(test_path)
+    TestFileUpdater.update!(test_path, outline)
+    added = existing_test_count(test_path) - before_count
+
+    if added == 0 do
+      {:ok, %{action: :unchanged, test_path: relative_test_path}}
+    else
+      {:ok, %{action: :updated, test_path: relative_test_path, added: added}}
+    end
+  end
+
+  defp create_test_file(test_path, relative_test_path, outline) do
+    total = Enum.reduce(outline, 0, &(length(&1.tests) + &2))
+    module_name = module_name(relative_test_path)
+    TestFileWriter.write!(test_path, module_name, outline)
+    {:ok, %{action: :created, test_path: relative_test_path, added: total}}
+  end
+
+  defp existing_test_count(test_path) do
+    test_path
+    |> File.read!()
+    |> then(&Regex.scan(~r/^\s*test\s+"/m, &1))
+    |> length()
+  end
+
+  defp validate_file(path) do
+    if File.regular?(path), do: :ok, else: {:error, "#{path}: File not found"}
+  end
+
+  defp module_name(test_path) do
+    segments =
+      test_path
+      |> Path.rootname()
+      |> Path.split()
+      |> Enum.map(&Macro.camelize/1)
+
+    Module.concat([__MODULE__ | segments])
   end
 end

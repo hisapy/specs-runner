@@ -26,12 +26,14 @@ defmodule SpecsRunner.SpecsParserTest do
                  %SpecsRunner.Core.Test{
                    name: "Reports as pending when the matching test file is missing",
                    scenario_name: nil,
+                   position: 0,
                    status: :pending,
                    errors: nil
                  },
                {nil, "Can be parsed"} => %SpecsRunner.Core.Test{
                  name: "Can be parsed",
                  scenario_name: nil,
+                 position: 1,
                  status: :pending,
                  errors: nil
                }
@@ -47,12 +49,14 @@ defmodule SpecsRunner.SpecsParserTest do
                {"Success", "Can be parsed"} => %SpecsRunner.Core.Test{
                  name: "Can be parsed",
                  scenario_name: "Success",
+                 position: 0,
                  status: :pending,
                  errors: nil
                },
                {"Failure", "Can be parsed"} => %SpecsRunner.Core.Test{
                  name: "Can be parsed",
                  scenario_name: "Failure",
+                 position: 1,
                  status: :pending,
                  errors: nil
                }
