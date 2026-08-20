@@ -16,15 +16,11 @@ It follows the matching spec files to ExUnit tests rules from [run_specs](run_sp
 - places the test file in the configured tests directory mirroring the specs structure
 - includes a `describe` block for each scenario in the spec
 - includes a `test` block for each acceptance criteria item
+- uses the acceptance criteria text as the test name
+- generates tests without a body to be explicit about untested behavior
 
 ### Scenario: Missing test blocks
 
 - adds `describe` blocks for scenarios that don't have corresponding test groups
 - adds `test` blocks for acceptance criteria items that don't have corresponding tests
 - preserves existing tests in the file
-
-### Scenario: Test content generation
-
-- generates valid ExUnit test syntax
-- uses the acceptance criteria text as the test name
-- generates tests without a body to be explicit about untested behavior

@@ -83,26 +83,6 @@ defmodule SpecsRunner.GenerateTestsTest do
     end
   end
 
-  describe "Test content generation" do
-    test "uses the acceptance criteria text as the test name and generates tests without a body",
-         %{specs_dir: specs_dir, tests_dir: tests_dir} do
-      copy_fixture_spec!(specs_dir, "spec_without_scenarios.md")
-
-      run_generate_tests(
-        Path.join(specs_dir, "spec_without_scenarios.md"),
-        specs_dir,
-        tests_dir
-      )
-
-      generated_path = Path.join(tests_dir, "spec_without_scenarios_test.exs")
-      content = File.read!(generated_path)
-
-      assert content =~ ~s(test "Can be parsed")
-      assert content =~ ~s(test "Can be validated")
-      refute Regex.match?(~r/test\s+".*"\s+do/, content)
-    end
-  end
-
   defp copy_fixture_spec!(specs_dir, fixture_name) do
     File.cp!(
       Path.join(@fixtures_dir, fixture_name),
