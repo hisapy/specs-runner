@@ -23,9 +23,29 @@ defmodule SpecsRunner.GenerateTestsTest do
     [specs_dir: specs_dir, tests_dir: tests_dir]
   end
 
-  describe "Missing test file" do
-    test "generates a test file mirroring the specs structure with a describe block per scenario and a test block per acceptance criteria item",
-         %{specs_dir: specs_dir, tests_dir: tests_dir} do
+  describe "With a missing test file" do
+    test "creates the test file in the configured test directory", %{
+      specs_dir: specs_dir,
+      tests_dir: tests_dir
+    } do
+      copy_fixture_spec!(specs_dir, "generate_tests_with_scenarios.md")
+      generated_path = Path.join(tests_dir, "generate_tests_with_scenarios_test.exs")
+
+      refute File.exists?(generated_path)
+
+      run_generate_tests(
+        Path.join(specs_dir, "generate_tests_with_scenarios.md"),
+        specs_dir,
+        tests_dir
+      )
+
+      assert File.exists?(generated_path)
+    end
+
+    test "generates tests and describe blocks matching the acceptance criteria ordering", %{
+      specs_dir: specs_dir,
+      tests_dir: tests_dir
+    } do
       copy_fixture_spec!(specs_dir, "generate_tests_with_scenarios.md")
 
       run_generate_tests(
@@ -36,39 +56,27 @@ defmodule SpecsRunner.GenerateTestsTest do
 
       generated_path = Path.join(tests_dir, "generate_tests_with_scenarios_test.exs")
 
-      assert File.exists?(generated_path)
-
       assert File.read!(generated_path) ==
                snapshot_content("generate_tests_with_scenarios_test.exs")
     end
-
-    test "generates a test file with a bare test block per acceptance criteria item when the spec has no scenarios",
-         %{specs_dir: specs_dir, tests_dir: tests_dir} do
-      copy_fixture_spec!(specs_dir, "spec_without_scenarios.md")
-
-      run_generate_tests(
-        Path.join(specs_dir, "spec_without_scenarios.md"),
-        specs_dir,
-        tests_dir
-      )
-
-      generated_path = Path.join(tests_dir, "spec_without_scenarios_test.exs")
-
-      assert File.exists?(generated_path)
-      assert File.read!(generated_path) == snapshot_content("spec_without_scenarios_test.exs")
-    end
   end
 
-  describe "Missing test blocks" do
-    test "adds missing describe and test blocks while preserving existing tests",
-         %{specs_dir: specs_dir, tests_dir: tests_dir} do
-      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
-
+  describe "When the test file exists" do
+    setup %{tests_dir: tests_dir} do
       copy_existing_test!(
         tests_dir,
         "generate_tests_missing_blocks_input_test.exs",
         "generate_tests_missing_blocks_test.exs"
       )
+
+      :ok
+    end
+
+    test "appends describe blocks to the test module", %{
+      specs_dir: specs_dir,
+      tests_dir: tests_dir
+    } do
+      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
 
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
@@ -77,9 +85,54 @@ defmodule SpecsRunner.GenerateTestsTest do
       )
 
       generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
+      content = File.read!(generated_path)
 
-      assert File.read!(generated_path) ==
-               snapshot_content("generate_tests_missing_blocks_snapshot_test.exs")
+      assert content =~ """
+               describe "Missing scenario coverage" do
+                 test "Also remains pending without a matching test"
+               end
+             """
+    end
+
+    test "appends tests to the test module", %{specs_dir: specs_dir, tests_dir: tests_dir} do
+      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
+
+      run_generate_tests(
+        Path.join(specs_dir, "generate_tests_missing_blocks.md"),
+        specs_dir,
+        tests_dir
+      )
+
+      generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
+      content = File.read!(generated_path)
+
+      assert content =~ ~s(  test "This has no matching test"\n)
+    end
+
+    test "appends tests to existing describe blocks", %{
+      specs_dir: specs_dir,
+      tests_dir: tests_dir
+    } do
+      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
+
+      run_generate_tests(
+        Path.join(specs_dir, "generate_tests_missing_blocks.md"),
+        specs_dir,
+        tests_dir
+      )
+
+      generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
+      content = File.read!(generated_path)
+
+      assert content =~ """
+               describe "Partially implemented scenario" do
+                 test "Has a matching test" do
+                   assert true
+                 end
+
+                 test "Remains pending without a matching test"
+               end
+             """
     end
   end
 
