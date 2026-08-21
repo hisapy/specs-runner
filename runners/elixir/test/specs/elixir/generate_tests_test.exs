@@ -2,6 +2,8 @@ defmodule SpecsRunner.GenerateTestsTest do
   @moduledoc false
   use ExUnit.Case, async: false
 
+  import ExUnit.CaptureIO
+
   @fixtures_dir Path.expand("../../../../../specs/fixtures_gen_tests", __DIR__)
   @snapshots_dir Path.expand("../../../test_fixtures", __DIR__)
 
@@ -28,7 +30,7 @@ defmodule SpecsRunner.GenerateTestsTest do
       specs_dir: specs_dir,
       tests_dir: tests_dir
     } do
-      copy_fixture_spec!(specs_dir, "generate_tests_with_scenarios.md")
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_with_scenarios.md")
       generated_path = Path.join(tests_dir, "generate_tests_with_scenarios_test.exs")
 
       refute File.exists?(generated_path)
@@ -46,7 +48,7 @@ defmodule SpecsRunner.GenerateTestsTest do
       specs_dir: specs_dir,
       tests_dir: tests_dir
     } do
-      copy_fixture_spec!(specs_dir, "generate_tests_with_scenarios.md")
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_with_scenarios.md")
 
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_with_scenarios.md"),
@@ -76,7 +78,7 @@ defmodule SpecsRunner.GenerateTestsTest do
       specs_dir: specs_dir,
       tests_dir: tests_dir
     } do
-      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
 
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
@@ -95,7 +97,7 @@ defmodule SpecsRunner.GenerateTestsTest do
     end
 
     test "appends tests to the test module", %{specs_dir: specs_dir, tests_dir: tests_dir} do
-      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
 
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
@@ -113,7 +115,7 @@ defmodule SpecsRunner.GenerateTestsTest do
       specs_dir: specs_dir,
       tests_dir: tests_dir
     } do
-      copy_fixture_spec!(specs_dir, "generate_tests_missing_blocks.md")
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
 
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
@@ -136,7 +138,7 @@ defmodule SpecsRunner.GenerateTestsTest do
     end
   end
 
-  defp copy_fixture_spec!(specs_dir, fixture_name) do
+  defp copy_fixture_spec_to_tmp_dir!(specs_dir, fixture_name) do
     File.cp!(
       Path.join(@fixtures_dir, fixture_name),
       Path.join(specs_dir, fixture_name)
@@ -156,12 +158,14 @@ defmodule SpecsRunner.GenerateTestsTest do
   defp run_generate_tests(spec_path, specs_dir, tests_dir) do
     Mix.Task.reenable("specs.generate_tests")
 
-    Mix.Task.run("specs.generate_tests", [
-      spec_path,
-      "--specs-dir",
-      specs_dir,
-      "--tests-dir",
-      tests_dir
-    ])
+    capture_io(fn ->
+      Mix.Task.run("specs.generate_tests", [
+        spec_path,
+        "--specs-dir",
+        specs_dir,
+        "--tests-dir",
+        tests_dir
+      ])
+    end)
   end
 end
