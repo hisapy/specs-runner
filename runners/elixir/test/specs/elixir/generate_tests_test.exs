@@ -125,6 +125,32 @@ defmodule SpecsRunner.GenerateTestsTest do
 
       assert File.read!(generated_path) =~ expected_snippet
     end
+
+    test "does not overwrite existing matching tests and describe blocks", %{
+      specs_dir: specs_dir,
+      tests_dir: tests_dir
+    } do
+      copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
+
+      generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
+
+      existing_snippet = """
+        describe "Partially implemented scenario" do
+          test "Has a matching test" do
+            assert true
+          end
+      """
+
+      assert File.read!(generated_path) =~ existing_snippet
+
+      run_generate_tests(
+        Path.join(specs_dir, "generate_tests_missing_blocks.md"),
+        specs_dir,
+        tests_dir
+      )
+
+      assert File.read!(generated_path) =~ existing_snippet
+    end
   end
 
   @fixtures_dir Path.expand("../../../../../specs/fixtures_gen_tests", __DIR__)

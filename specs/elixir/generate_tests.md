@@ -22,3 +22,4 @@ It generates not implemented tests, i.e., `test` without `do...end` blocks.
 - appends describe blocks to the test module
 - appends tests to the test module
 - appends tests to existing describe blocks
+- does not overwrite existing matching tests and describe blocks
