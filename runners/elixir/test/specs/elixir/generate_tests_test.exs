@@ -132,24 +132,16 @@ defmodule SpecsRunner.GenerateTestsTest do
     } do
       copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
 
-      generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
-
-      existing_snippet = """
-        describe "Partially implemented scenario" do
-          test "Has a matching test" do
-            assert true
-          end
-      """
-
-      assert File.read!(generated_path) =~ existing_snippet
-
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
         specs_dir,
         tests_dir
       )
 
-      assert File.read!(generated_path) =~ existing_snippet
+      generated_path = Path.join(tests_dir, "generate_tests_missing_blocks_test.exs")
+
+      assert File.read!(generated_path) ==
+               snapshot_content("generate_tests_missing_blocks_snapshot_test.exs")
     end
   end
 
