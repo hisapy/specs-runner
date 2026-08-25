@@ -132,6 +132,14 @@ defmodule SpecsRunner.GenerateTestsTest do
     } do
       copy_fixture_spec_to_tmp_dir!(specs_dir, "generate_tests_missing_blocks.md")
 
+      # Running the generator twice yields the same snapshot, without modifying the
+      # test in the partially implemented scenario
+      run_generate_tests(
+        Path.join(specs_dir, "generate_tests_missing_blocks.md"),
+        specs_dir,
+        tests_dir
+      )
+
       run_generate_tests(
         Path.join(specs_dir, "generate_tests_missing_blocks.md"),
         specs_dir,
