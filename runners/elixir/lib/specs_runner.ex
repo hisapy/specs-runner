@@ -164,12 +164,14 @@ defmodule SpecsRunner do
   end
 
   defp module_name(test_path) do
+    base = Mix.Project.config()[:app] |> to_string() |> Macro.camelize()
+
     segments =
       test_path
       |> Path.rootname()
       |> Path.split()
       |> Enum.map(&Macro.camelize/1)
 
-    Module.concat([__MODULE__ | segments])
+    Module.concat([base | segments])
   end
 end
