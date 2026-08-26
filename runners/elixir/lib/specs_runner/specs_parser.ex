@@ -29,7 +29,8 @@ defmodule SpecsRunner.SpecsParser do
       current_scenario_has_tests?: false,
       has_any_scenarios?: false,
       scenario_titles: MapSet.new(),
-      title_found?: false
+      title_found?: false,
+      next_position: 0
     }
   end
 
@@ -120,7 +121,11 @@ defmodule SpecsRunner.SpecsParser do
   defp handle_line({:scenario, _scenario_title}, state), do: state
 
   defp handle_line({:list_item, test_name}, %{in_acceptance_criteria?: true} = state) do
-    test = %Test{name: test_name, scenario_name: state.current_scenario}
+    test = %Test{
+      name: test_name,
+      scenario_name: state.current_scenario,
+      position: state.next_position
+    }
 
     spec =
       try do
@@ -140,7 +145,8 @@ defmodule SpecsRunner.SpecsParser do
       state
       | spec: spec,
         has_criteria_tests?: true,
-        current_scenario_has_tests?: true
+        current_scenario_has_tests?: true,
+        next_position: state.next_position + 1
     }
   end
 
