@@ -9,10 +9,13 @@ defmodule SpecsRunner do
   alias SpecsRunner.TestFileWriter
   alias SpecsRunner.TestOutline
 
-  def run(specs_dir, tests_dir) when is_binary(specs_dir) and is_binary(tests_dir) do
+  @default_test_helper_path "test/test_helper.exs"
+
+  def run(specs_dir, tests_dir, test_helper_path \\ @default_test_helper_path)
+      when is_binary(specs_dir) and is_binary(tests_dir) and is_binary(test_helper_path) do
     with :ok <- validate_dir(specs_dir),
          :ok <- validate_dir(tests_dir),
-         :ok <- ensure_ex_unit_started() do
+         :ok <- ensure_ex_unit_started(test_helper_path) do
       specs_dir = Path.expand(specs_dir)
       tests_dir = Path.expand(tests_dir)
 
@@ -29,7 +32,7 @@ defmodule SpecsRunner do
         )
         |> Enum.reduce(run_info, &process_parsed_spec/2)
 
-      ExUnit.start(
+      ExUnit.configure(
         autorun: false,
         formatters: [ExUnitCLIFormatter],
         run_info: run_info
@@ -100,10 +103,17 @@ defmodule SpecsRunner do
     run_info
   end
 
-  defp ensure_ex_unit_started do
-    case Application.ensure_all_started(:ex_unit) do
-      {:ok, _started_apps} -> :ok
-      {:error, reason} -> {:error, "Failed to start :ex_unit app: #{inspect(reason)}"}
+  defp ensure_ex_unit_started(test_helper_path) do
+    if File.regular?(test_helper_path) do
+      # Requiring the host app's test_helper.exs runs its own ExUnit.start(),
+      # picking up sandbox mode and other test bootstrapping it configures.
+      Code.require_file(test_helper_path)
+      :ok
+    else
+      case Application.ensure_all_started(:ex_unit) do
+        {:ok, _started_apps} -> ExUnit.start(autorun: false)
+        {:error, reason} -> {:error, "Failed to start :ex_unit app: #{inspect(reason)}"}
+      end
     end
   end
 

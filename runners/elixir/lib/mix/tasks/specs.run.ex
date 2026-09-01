@@ -14,6 +14,9 @@ defmodule Mix.Tasks.Specs.Run do
 
     * `--specs-dir` - directory containing Markdown spec files (optional; defaults to "specs")
     * `--tests-dir` - directory containing ExUnit test files (optional; defaults to "test/specs")
+    * `--test-helper` - path to the ExUnit test helper to require before running,
+      e.g. for `Ecto.Adapters.SQL.Sandbox.mode/2` or other test bootstrapping
+      (optional; defaults to "test/test_helper.exs"; skipped if not found)
 
   ## Config
 
@@ -21,7 +24,8 @@ defmodule Mix.Tasks.Specs.Run do
 
       config :specs_runner,
         specs_dir: "specs",
-        tests_dir: "test/specs"
+        tests_dir: "test/specs",
+        test_helper_path: "test/test_helper.exs"
 
   ## Examples
 
@@ -36,11 +40,13 @@ defmodule Mix.Tasks.Specs.Run do
 
   @options [
     specs_dir: :string,
-    tests_dir: :string
+    tests_dir: :string,
+    test_helper: :string
   ]
 
   @default_specs_dir "specs"
   @default_tests_dir "test/specs"
+  @default_test_helper_path "test/test_helper.exs"
 
   @impl Mix.Task
   def run(args) do
@@ -49,6 +55,7 @@ defmodule Mix.Tasks.Specs.Run do
 
     specs_dir = get_config_value(opts, env_config, :specs_dir)
     tests_dir = get_config_value(opts, env_config, :tests_dir)
+    test_helper_path = get_test_helper_path(opts, env_config)
 
     Mix.shell().info([
       "SpecsRunner is running\n",
@@ -56,7 +63,7 @@ defmodule Mix.Tasks.Specs.Run do
       "Tests directory: #{tests_dir}\n"
     ])
 
-    case SpecsRunner.run(specs_dir, tests_dir) do
+    case SpecsRunner.run(specs_dir, tests_dir, test_helper_path) do
       {:ok, _run_info} ->
         # maybe call formatter/reporter to print summary here
         :ok
@@ -79,4 +86,9 @@ defmodule Mix.Tasks.Specs.Run do
 
   defp default(:specs_dir), do: @default_specs_dir
   defp default(:tests_dir), do: @default_tests_dir
+
+  defp get_test_helper_path(opts, env_config) do
+    fallback = Keyword.get(env_config, :test_helper_path, @default_test_helper_path)
+    Keyword.get(opts, :test_helper, fallback)
+  end
 end

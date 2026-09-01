@@ -3,8 +3,8 @@ defmodule SpecsRunner.ExUnitCLIFormatterTest do
   use ExUnit.Case, async: true
   import ExUnit.CaptureIO
 
-  alias SpecsRunner.ExUnitCLIFormatter
   alias SpecsRunner.Core.{RunInfo, Spec, Test}
+  alias SpecsRunner.ExUnitCLIFormatter
 
   describe "handle_cast/2 :test_finished passed" do
     @describetag ex_unit_test_state: :passed
