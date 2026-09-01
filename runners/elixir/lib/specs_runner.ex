@@ -104,16 +104,25 @@ defmodule SpecsRunner do
   end
 
   defp ensure_ex_unit_started(test_helper_path) do
-    if File.regular?(test_helper_path) do
-      # Requiring the host app's test_helper.exs runs its own ExUnit.start(),
-      # picking up sandbox mode and other test bootstrapping it configures.
-      Code.require_file(test_helper_path)
-      :ok
-    else
-      case Application.ensure_all_started(:ex_unit) do
-        {:ok, _started_apps} -> ExUnit.start(autorun: false)
-        {:error, reason} -> {:error, "Failed to start :ex_unit app: #{inspect(reason)}"}
-      end
+    case Application.ensure_all_started(:ex_unit) do
+      {:ok, _started_apps} ->
+        # ExUnit.start/1 only registers its autorun-at-exit hook on the first
+        # call in the VM. Starting with autorun: false here first means the
+        # host's test_helper.exs (which typically calls plain ExUnit.start())
+        # can't register that hook behind us, which would otherwise run the
+        # suite a second time when the mix task's process exits.
+        ExUnit.start(autorun: false)
+
+        if File.regular?(test_helper_path) do
+          # Requiring the host app's test_helper.exs picks up sandbox mode
+          # and other test bootstrapping it configures.
+          Code.require_file(test_helper_path)
+        end
+
+        :ok
+
+      {:error, reason} ->
+        {:error, "Failed to start :ex_unit app: #{inspect(reason)}"}
     end
   end
 
