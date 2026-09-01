@@ -134,6 +134,7 @@ defmodule SpecsRunner do
       tests_dir = Path.expand(tests_dir)
 
       spec_path
+      |> Path.expand()
       |> SpecsParser.parse_file_stream!(specs_dir, tests_dir)
       |> generate_tests_for_spec(tests_dir)
     end
