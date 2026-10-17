@@ -67,5 +67,7 @@ _Optional text, section or other content describing the feature or requirement a
 - Keep acceptance criteria concise, specific, and independently testable — each bullet must describe an observable behavior and a verifiable outcome.
 - Use scenarios to group related acceptance criteria by specific contexts or conditions.
 - Write short scenario titles and acceptance criteria list items because these will be used to match test suite blocks (e.g. `describe`, `context`, `test`, `it`).
+- Keep each acceptance criterion to a few words. Name the subject in the scenario title (e.g. `### Scenario: Invitation link`) and leave it implied in the bullets, which then read as a sentence with the title (e.g. "logs the member in", "is rejected when expired"). Move context and rationale to the spec body.
+- Write the prose for the agent implementing the spec: only what it needs to meet the acceptance criteria, linking to shared docs instead of restating them.
 - When editing existing content, preserve all existing content and wording. Do not delete or rewrite anything the user wrote.
 - Before adding any structural elements (H1 title, `## Acceptance Criteria` section, scenarios), ask the user first. Present your suggestion and let them decide — don't add them silently.
