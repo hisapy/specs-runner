@@ -192,6 +192,6 @@ defmodule SpecsRunner do
       |> Path.split()
       |> Enum.map(&Macro.camelize/1)
 
-    Module.concat([base | segments])
+    Module.concat([base, "Specs" | segments])
   end
 end

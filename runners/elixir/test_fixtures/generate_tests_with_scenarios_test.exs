@@ -1,4 +1,4 @@
-defmodule SpecsRunner.GenerateTestsWithScenariosTest do
+defmodule SpecsRunner.Specs.GenerateTestsWithScenariosTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
